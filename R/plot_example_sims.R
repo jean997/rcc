@@ -1,6 +1,13 @@
 
-#Plotting functions
-plot_all_coverage_ggplot <- function(R, main="", proportion=0.2,
+#'Plot coverage of example simulations
+#'@param R A list produced by \code{example_sim}
+#'@param main Title
+#'@param proportion Proportion of statistics to output
+#'@param make.legend Produce a legend?
+#'@param y.axis.off Don't label the y axis?
+#'@result A ggplot object
+#'@export
+plot_example_coverage <- function(R, main="", proportion=0.2,
                                      make.legend=FALSE, y.axis.off=FALSE){
   which.keep <- which(R$simnames %in% c("naive", "wfb", "wfb2", "par", "oracle"))
   p <- dim(R$COVERAGE)[2]
@@ -25,6 +32,7 @@ plot_all_coverage_ggplot <- function(R, main="", proportion=0.2,
     geom_point(aes(y=RCC, group=Method,  color=Method, shape=Method)) +
     theme_bw(base_size = 14) +
     scale_shape_manual(values=c(1:4, 0)) + ylim(c(0, 1)) +
+    scale_color_manual(values=c("black", "gold4", "forestgreen", "blue", "deeppink3")) +
     theme(panel.grid.major = element_blank(), panel.grid.minor=element_blank())
   if(!make.legend) h <- h+ theme(legend.position="none")
   else h <- h + theme(legend.position=c(0.28, 0.4),
@@ -37,7 +45,15 @@ plot_all_coverage_ggplot <- function(R, main="", proportion=0.2,
 
 }
 
-plot_all_width_ggplot <- function(R, main="", proportion=0.2,
+#'Plot average width of example simulations
+#'@param R A list produced by \code{example_sim}
+#'@param main Title
+#'@param proportion Proportion of statistics to output
+#'@param make.legend Produce a legend?
+#'@param y.axis.off Don't label the y axis?
+#'@result A ggplot object
+#'@export
+plot_example_width <- function(R, main="", proportion=0.2,
                                   make.legend=FALSE, y.axis.off = TRUE){
   which.keep <- which(R$simnames %in% c("naive", "wfb", "wfb2", "par", "oracle"))
   p <- dim(R$WIDTH)[2]
@@ -67,6 +83,7 @@ plot_all_width_ggplot <- function(R, main="", proportion=0.2,
     geom_point(aes(y=`Average Width`, group=Method,  color=Method, shape=Method)) +
     theme_bw(base_size = 14) +
     scale_shape_manual(values=c(1:4, 0)) + ylim(ylim)+
+    scale_color_manual(values=c("black", "gold4", "forestgreen", "blue", "deeppink3")) +
     theme(panel.grid.major = element_blank(), panel.grid.minor=element_blank())
   if(!make.legend) h <- h+ theme(legend.position="none")
   if(y.axis.off) h <- h + theme(axis.title.y = element_blank())
@@ -74,3 +91,4 @@ plot_all_width_ggplot <- function(R, main="", proportion=0.2,
   return(h)
 
 }
+
