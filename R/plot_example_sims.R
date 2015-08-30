@@ -1,0 +1,76 @@
+
+#Plotting functions
+plot_all_coverage_ggplot <- function(R, main="", proportion=0.2,
+                                     make.legend=FALSE, y.axis.off=FALSE){
+  which.keep <- which(R$simnames %in% c("naive", "wfb", "wfb2", "par", "oracle"))
+  p <- dim(R$COVERAGE)[2]
+  k <- floor((1-proportion)*p)
+  k <- max(k, 1)
+  avg.coverage <- matrix(nrow=(p-k+1), ncol=length(which.keep))
+  nms <- c()
+  for(i in 1:length(which.keep)){
+    w <- which.keep[i]
+    nms <- c(nms, R$simnames[w])
+    avg.coverage[,i] <- rowMeans(R$COVERAGE[w, , ])[k:p]
+  }
+  avg.coverage <- data.frame(avg.coverage)
+  names(avg.coverage) <- nms
+  avg.coverage$Rank <- k:p
+  avg.coverage.long <- gather(avg.coverage, "Method", "RCC", -Rank)
+  avg.coverage.long$Method <- factor( as.character(avg.coverage.long$Method),
+                                      levels=c("naive", "wfb", "wfb2", "oracle", "par"))
+  levels(avg.coverage.long$Method) = c("Marginal", "WFB", "WFB-Sliding",
+                                       "Oracle", "Parametric Bootstrap")
+  h <- ggplot(avg.coverage.long, aes(x=Rank)) + geom_hline(aes(yintercept=0.9)) +
+    geom_point(aes(y=RCC, group=Method,  color=Method, shape=Method)) +
+    theme_bw(base_size = 14) +
+    scale_shape_manual(values=c(1:4, 0)) + ylim(c(0, 1)) +
+    theme(panel.grid.major = element_blank(), panel.grid.minor=element_blank())
+  if(!make.legend) h <- h+ theme(legend.position="none")
+  else h <- h + theme(legend.position=c(0.28, 0.4),
+                      legend.key = element_rect(color="white", fill="white", size = 0.6, linetype=0),
+                      legend.background = element_rect(fill="transparent"),
+                      legend.title= element_text(size=10), legend.text=element_text(size=9))
+  if(y.axis.off) h <- h + theme(axis.title.y = element_blank())
+  if(!main == "") h <- h + ggtitle(main) + theme(plot.title=element_text(size=20))
+  return(h)
+
+}
+
+plot_all_width_ggplot <- function(R, main="", proportion=0.2,
+                                  make.legend=FALSE, y.axis.off = TRUE){
+  which.keep <- which(R$simnames %in% c("naive", "wfb", "wfb2", "par", "oracle"))
+  p <- dim(R$WIDTH)[2]
+  k <- floor((1-proportion)*p)
+  k <- max(k, 1)
+
+  ylim=range(apply(R$WIDTH[which.keep, , ],
+                   MARGIN=1,  FUN=function(x){ z <- rowMeans(x); return(z[k:p])}), na.rm=TRUE)
+
+  avg.width <- matrix(nrow=(p-k+1), ncol=length(which.keep))
+  nms <- c()
+  for(i in 1:length(which.keep)){
+    w <- which.keep[i]
+    nms <- c(nms, R$simnames[w])
+    avg.width[,i] <- rowMeans(R$WIDTH[w, , ])[k:p]
+  }
+  avg.width <- data.frame(avg.width)
+  names(avg.width) <- nms
+  avg.width$Rank <- k:p
+  avg.width.long <- gather(avg.width, "Method", "Average Width", -Rank)
+  avg.width.long$Method <- factor( as.character(avg.width.long$Method),
+                                   levels=c("naive", "wfb", "wfb2", "oracle", "par"))
+  levels(avg.width.long$Method) = c("Marginal", "WFB", "WFB-Sliding",
+                                    "Oracle", "Parametric Bootstrap")
+
+  h <- ggplot(avg.width.long, aes(x=Rank)) +
+    geom_point(aes(y=`Average Width`, group=Method,  color=Method, shape=Method)) +
+    theme_bw(base_size = 14) +
+    scale_shape_manual(values=c(1:4, 0)) + ylim(ylim)+
+    theme(panel.grid.major = element_blank(), panel.grid.minor=element_blank())
+  if(!make.legend) h <- h+ theme(legend.position="none")
+  if(y.axis.off) h <- h + theme(axis.title.y = element_blank())
+  if(!main == "") h <- h + ggtitle(main) + theme(plot.title=element_text(size=20))
+  return(h)
+
+}
