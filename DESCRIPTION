@@ -1,6 +1,6 @@
 Package: rcc
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Replicate simulations in "Rank conditional coverage and confidence intervals in high dimensional problems."
 Version: 0.1
 Date: 2015-08-29
 Author: Who wrote it
@@ -8,3 +8,5 @@ Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
 LazyData: TRUE
+Suggests: knitr
+VignetteBuilder: knitr

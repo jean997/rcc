@@ -8,7 +8,7 @@ make_fig1 <- function(){
     if(i ==1) y.axis.off=FALSE
       else y.axis.off <- TRUE
     plot.list.c[[i]] <- plot_example_coverage(Z, main=main, proportion=0.2,
-                                        y.axis.off=y.axis.off, make.legend=FALSE)
+                                        y.axis.off=y.axis.off, legend.position = "none")
   }
   plot.list.w <- list()
   for(i in 1:4){
@@ -17,7 +17,7 @@ make_fig1 <- function(){
     if(i == 1) y.axis.off=FALSE
       else y.axis.off = TRUE
     plot.list.w[[i]] <- plot_example_width(Z, main=main, proportion=0.2,
-                                    make.legend=FALSE, y.axis.off = y.axis.off)
+                                    legend.position = "none", y.axis.off = y.axis.off)
   }
   h <- arrangeGrob(plot.list.c[[1]], plot.list.c[[2]], plot.list.c[[3]], plot.list.c[[4]],
                  plot.list.w[[1]], plot.list.w[[2]], plot.list.w[[3]], plot.list.w[[4]],

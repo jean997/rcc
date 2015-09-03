@@ -7,7 +7,7 @@
 #' @param n.rep Number of simulations to run
 #' @param which.X0 Which coefficients contribute to the phenotype
 #' @param beta Effect size (including an intercept). Phenotypes whill be generated as
-#' \code{y = beta %*% X0} where
+#' \code{y = beta \%*\% X0} where
 #' \code{X0 = cbind(rep(1, length(which.sample)), X.pop[which.sample, which.X0])}
 #' @return A list with elements:
 #' \describe{
