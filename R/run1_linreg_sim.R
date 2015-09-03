@@ -15,7 +15,6 @@ run1_linreg_sim <- function(beta.type, which.run, file.prefix, seed=NULL){
   which.X0 <- macs_params$include[[which.type]]
   beta <- macs_params$betas[[which.type]]
 
-  set.seed(all.seeds[which.run])
   z <- linreg_sim(X.pop=X.pop, which.sample = 1:n, n.rep=1,
                   which.X0=which.X0, beta=beta)
   save(z, file=paste0(file.prefix,  beta.type,  "_n", which.run, ".RData"))
