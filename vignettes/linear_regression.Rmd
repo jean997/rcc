@@ -1,0 +1,29 @@
+---
+title: "Linear regression with simulated genotypes""
+author: 
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Linear regression with simulated genotypes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, warning=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(rcc)
+```
+
+This vignette reproduces the simulations in section 3.1. These can take quite a while so it is better to run them
+in parallell than sequentially.
+
+```{r, eval=FALSE}
+set.seed(5989615)
+all.seeds <- floor(runif(n=400, min=1000, max=1e7))
+
+for(beta.type in c("none", "ten_equal", "ten_norm", "mixture")){
+    for(i in 1:400){
+      run1_linreg_sim(beta.type="none", which.run=i, file.prefix="linreg", seed=all.seeds[i])
+    }
+}
+```
