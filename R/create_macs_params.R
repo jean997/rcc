@@ -16,7 +16,8 @@ create_macs_params <- function(){
   #Mixture of effects
   betas[[4]] <- rnorm(500, mean=0, sd=0.25)
   big.effects <- seq(from=1, to=500, by=50)
-  betas[[4]][big.effects] <- rnorm(10, mean=2, sd=1)
+  betas[[4]][big.effects] <-  rnorm(10, mean=2, sd=1)
+  betas[[4]] <- c(0, betas[[4]])
   include[[4]] <- 1:500
   return(list("betas"=betas, "include"=include))
 }
