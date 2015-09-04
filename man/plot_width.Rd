@@ -4,8 +4,8 @@
 \alias{plot_width}
 \title{Plot average width of example simulations}
 \usage{
-plot_width(R, simnames, cols, shapes, main = "", proportion = 0.2,
-  y.axis.off = FALSE, legend.position = "none")
+plot_width(R, simnames, cols, shapes, legend.names, main = "",
+  proportion = 0.2, y.axis.off = FALSE, legend.position = "none")
 }
 \arguments{
 \item{R}{A list produced by \code{example_sim}}
@@ -14,6 +14,8 @@ plot_width(R, simnames, cols, shapes, main = "", proportion = 0.2,
 
 \item{cols,shapes}{colors and shapes to use.}
 
+\item{legend.names}{Names to print in legend}
+
 \item{main}{Title}
 
 \item{proportion}{Proportion of statistics to output}
@@ -21,8 +23,6 @@ plot_width(R, simnames, cols, shapes, main = "", proportion = 0.2,
 \item{y.axis.off}{Don't label the y axis?}
 
 \item{legend.position}{Where to put the legend.}
-
-\item{legend.names}{Names to print in legend}
 }
 \value{
 A ggplot object

@@ -3,10 +3,10 @@ Type: Package
 Title: Replicate simulations in "Rank conditional coverage and confidence intervals in high dimensional problems."
 Version: 0.1
 Date: 2015-08-29
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
+Author: blinded for now
+Maintainer: blinded for now <xxxx@yy.edu>
+Description: This package is contains code to replicate the simulations in "Rank conditional coverage and confidence intervals in high dimensional problems." It contains three vignettes walking through how to do this.
 License: What license is it under?
 LazyData: TRUE
-Suggests: knitr
+Suggests: knitr, ggplot2, psychometric, tidyr
 VignetteBuilder: knitr
