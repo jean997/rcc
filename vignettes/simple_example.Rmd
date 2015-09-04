@@ -1,0 +1,62 @@
+---
+title: "Simple Example"
+author: 
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Simple Example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, warning=FALSE}
+library(rcc)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+This vignette produces the example shown in figure 1 in section 1.3 of "Rank conditional coverage and confidence intervals in high dimensional problems."
+
+The builtin data set `example_params` is a 1000 by 4 matrix containing four sets of parameter values. 
+```{r, show='hold'}
+titles <- c("All Zero", "All N(0, 1)", "100 Effects=3", "100 Effects N(0, 1)")
+for(i in 1:4){
+  hist(example_params[,i], breaks=15, main=titles[i], xlab="Theta")
+}
+```
+The function `example_sim` simulates normally distributed data from a given vector of means and constructs confidence intervals using the five methods described in the paper 
+  * naive
+  * oracle rank conditional pivotal intervals
+  * parametric bootstrap intervals
+  * selection adjusted intervals described by Weinstein et al (2013)
+  * sliding thershold variation of the Weinstein et al intervals
+
+The following prduces the simulations shown:
+
+```{r, eval=FALSE}
+set.seed(6587900)
+sim.list <- list()
+for(i in 1:4){
+  sim.list[[i]] <- example_sim(example_params[,i], n=200, use.abs=FALSE)
+}
+```
+Each simulation object is a list containing matrices of the raw data generated and two 5 by 1000 by 200 arrays giving the coverage and interval width for each of five types of intervals at for each rank over 200 replications (see documentation for `example_sim`). 
+```{r}
+names(sim.list[[1]])
+sim.list[[1]]$simnames
+dim(sim.list[[1]]$COVERAGE)
+dim(sim.list[[1]]$WIDTH)
+```
+
+## Plotting
+Plots can be created with the `plot_coverage` and `plot_width` functions.
+
+```{r, fig.show='hold', fig.width=6.5}
+plot_coverage(sim.list[[2]], proportion=0.2,
+              cols=c("black", "forestgreen", "deeppink3", "gold4", "blue"),
+              shapes= c(1, 3, 0, 2, 4),
+              simnames=c("naive", "wfb2", "par", "wfb", "oracle"),
+              legend.names = c("Marginal", "WFB-Sliding", "Parametric Bootstrap", "WFB", "Oracle"), legend.position = "right")
+```
+
+## A note about absolute value
+The functions accompanying  "Selection Adjusted Confidence Intervals with More Power to Determine the Sign" By Asaf Weinstein, William Fithian, and Yoav Benjamini JASA (2012) adjust for selection based on a threshold on the absolute value of the estimate. Bootstrap intervals can be constructed ranking by signed or by absolute value -- algorithms are only given explicitly for signed ranking so this is used in the example. To construct intervals which rank based on absolute value set `use.abs=TRUE` in the `example_sim` function.

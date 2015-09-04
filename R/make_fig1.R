@@ -7,7 +7,11 @@ make_fig1 <- function(){
     Z <- sim.list[[i]]
     if(i ==1) y.axis.off=FALSE
       else y.axis.off <- TRUE
-    plot.list.c[[i]] <- plot_example_coverage(Z, main=main, proportion=0.2,
+    plot.list.c[[i]] <- plot_coverage(Z, main=main, proportion=0.2,
+                                              cols=c("black", "forestgreen", "deeppink3", "gold4", "blue"),
+                                              shapes= c(1, 3, 0, 2, 4),
+                                              simnames=c("naive", "wfb2", "par", "wfb", "oracle"),
+                                              legend.names = c("Marginal", "WFB-Sliding", "Parametric Bootstrap", "WFB", "Oracle"),
                                         y.axis.off=y.axis.off, legend.position = "none")
   }
   plot.list.w <- list()
@@ -16,8 +20,12 @@ make_fig1 <- function(){
     main =  ""
     if(i == 1) y.axis.off=FALSE
       else y.axis.off = TRUE
-    plot.list.w[[i]] <- plot_example_width(Z, main=main, proportion=0.2,
-                                    legend.position = "none", y.axis.off = y.axis.off)
+    plot.list.w[[i]] <- plot_width(Z, main=main, proportion=0.2,
+                                      cols=c("black", "forestgreen", "deeppink3", "gold4", "blue"),
+                                      shapes= c(1, 3, 0, 2, 4),
+                                      simnames=c("naive", "wfb2", "par", "wfb", "oracle"),
+                                      legend.names = c("Marginal", "WFB-Sliding", "Parametric Bootstrap", "WFB", "Oracle"),
+                                      y.axis.off=y.axis.off, legend.position = "none")
   }
   h <- arrangeGrob(plot.list.c[[1]], plot.list.c[[2]], plot.list.c[[3]], plot.list.c[[4]],
                  plot.list.w[[1]], plot.list.w[[2]], plot.list.w[[3]], plot.list.w[[4]],
