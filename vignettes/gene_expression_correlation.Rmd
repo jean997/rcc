@@ -1,6 +1,6 @@
 ---
 title: "Gene Expression Correlation"
-author: 
+author: ""
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >

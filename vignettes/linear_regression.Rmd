@@ -1,10 +1,10 @@
 ---
-title: "Linear regression with simulated genotypes""
-author: 
+title: "Linear Regression with Simulated Genotypes"
+author: ""
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Linear regression with simulated genotypes}
+  %\VignetteIndexEntry{Linear Regression with Simulated Genotypes}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
