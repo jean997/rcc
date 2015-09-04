@@ -16,6 +16,8 @@ library(rcc)
 
 This vignette reproduces the simulations in section 3.1. These can take quite a while so it is better to run them in parallell than sequentially as shown below.
 
+The function `run1_linreg_sim` is a wrapper to call `linreg_sim` using built-in data and parameters. It uses a matrix `population_genotypes` which contains SNP data for 500 SNPs in 10,000 individuals. These data were produced using MACS as 5 blocks of 100 SNPs.
+
 ```{r, eval=FALSE}
 set.seed(5989615)
 all.seeds <- floor(runif(n=400, min=1000, max=1e7))

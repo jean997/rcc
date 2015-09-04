@@ -2,6 +2,7 @@
 #'@import MASS
 #'@import tidyr
 #'@import ggplot2
+#'@import  psychometric
 
 #Generate data according to a linear model
 #X0 is probably a small subset of the total number of predictors

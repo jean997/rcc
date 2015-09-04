@@ -4,8 +4,8 @@
 \alias{plot_example_width}
 \title{Plot average width of example simulations}
 \usage{
-plot_example_width(R, main = "", proportion = 0.2, make.legend = FALSE,
-  y.axis.off = TRUE)
+plot_example_width(R, main = "", proportion = 0.2, y.axis.off = TRUE,
+  legend.position = "none")
 }
 \arguments{
 \item{R}{A list produced by \code{example_sim}}
@@ -14,9 +14,9 @@ plot_example_width(R, main = "", proportion = 0.2, make.legend = FALSE,
 
 \item{proportion}{Proportion of statistics to output}
 
-\item{make.legend}{Produce a legend?}
-
 \item{y.axis.off}{Don't label the y axis?}
+
+\item{legend.position}{Where to put the legend.}
 }
 \value{
 A ggplot object

@@ -4,8 +4,8 @@
 \alias{plot_example_coverage}
 \title{Plot coverage of example simulations}
 \usage{
-plot_example_coverage(R, main = "", proportion = 0.2, make.legend = FALSE,
-  y.axis.off = FALSE)
+plot_example_coverage(R, main = "", proportion = 0.2, y.axis.off = FALSE,
+  legend.position = c(0.28, 0.4))
 }
 \arguments{
 \item{R}{A list produced by \code{example_sim}}
@@ -14,9 +14,9 @@ plot_example_coverage(R, main = "", proportion = 0.2, make.legend = FALSE,
 
 \item{proportion}{Proportion of statistics to output}
 
-\item{make.legend}{Produce a legend?}
-
 \item{y.axis.off}{Don't label the y axis?}
+
+\item{legend.position}{Where to put the legend.}
 }
 \value{
 A ggplot object
