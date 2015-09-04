@@ -36,7 +36,7 @@ for(beta.type in c("none", "ten_equal", "ten_norm", "mixture")){
     COVERAGE <- array(dim=c(5, 500, 400))
     WIDTH <- array(dim=c(5, 500, 400))
     for(i in 1:400){
-      z <- getobj(paste0("linreg_", beta.type, "_n", i, ".RData"))
+      z <- rcc:::getobj(paste0("linreg_", beta.type, "_n", i, ".RData"))
       COVERAGE[, , i] <- z$COVERAGE
       WIDTH[, , i] <- z$WIDTH
     }
