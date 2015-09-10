@@ -19,13 +19,22 @@ library(rcc)
 The simulations shown in section 3.2 are run with a sample size of 30 for both gene sets. The `cor_sim` function generates data and calculates confidence intervals. Data is returned in the same format as `linreg_sim` and `example_sim`.
 
 For the set of genes on chromosome 1:
-```{r}
-Sigma <- cov(t(chr1_genes))
-dim(Sigma)
+Plot correlation for chromosome 1 genes
+```{r, fig.show='hold', fig.width=5}
+library(reshape2)
+library(ggplot2)
+P_low <- melt(cor(t(chr1_genes), use="p"))
+cp_low <- qplot(x=Var1, y=Var2, data=P_low, fill=value, geom="tile") + 
+              scale_fill_gradient2(limits=c(-1, 1)) + 
+              theme(axis.text.x=element_blank(), axis.text.y=element_blank(), 
+                    axis.title.x=element_blank(), axis.title.y = element_blank())
+cp_low
 ```
+
 ```{r, eval=FALSE}
 set.seed(19519)
-chr1_sim_results <- cor_sim(Sigma=Sigma, n=30, n.rep=200)
+sigma_chr1 <- cov(t(chr1_genes))
+chr1_sim_results <- cor_sim(Sigma=sigma_chr1, n=30, n.rep=200)
 ```
 
 
@@ -34,7 +43,19 @@ For the set of genes involved in DNA replication:
 Sigma <- cov(t(dna_rep_genes))
 dim(Sigma)
 ```
+Plot correlation for DNA repliacation genes:
+```{r, fig.show='hold', fig.width=5}
+P_high <- melt(cor(t(dna_rep_genes), use="p"))
+cp_high <- qplot(x=Var1, y=Var2, data=P_high, fill=value, geom="tile") + 
+              scale_fill_gradient2(limits=c(-1, 1)) + 
+              theme(axis.text.x=element_blank(), axis.text.y=element_blank(), 
+                    axis.title.x=element_blank(), axis.title.y = element_blank())
+cp_high
+```
+
+
 ```{r, eval=FALSE}
-set.seed(19500)
-dna_rep_sim_results <- cor_sim(Sigma=Sigma, n=30, n.rep=200)
+set.seed(19519)
+sigma_dnarep <- cov(t(dna_rep_genes))
+dna_rep_sim_results <- cor_sim(Sigma=sigma_dnarep, n=30, n.rep=200)
 ```

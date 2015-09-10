@@ -11,7 +11,7 @@
 #'@export
 plot_coverage <- function(R, simnames, legend.names,
                                   cols, shapes, main="", proportion=0.2,
-                                    y.axis.off=FALSE,
+                                    y.axis.off=FALSE, set.range=FALSE,
                                     legend.position=c(0.28, 0.4)){
   which.keep <- which(R$simnames %in% simnames)
   p <- dim(R$COVERAGE)[2]
@@ -22,13 +22,14 @@ plot_coverage <- function(R, simnames, legend.names,
   for(i in 1:length(which.keep)){
     w <- which.keep[i]
     nms <- c(nms, R$simnames[w])
-    avg.coverage[,i] <- rowMeans(R$COVERAGE[w, , ])[k:p]
+    avg.coverage[,i] <- rowMeans(R$COVERAGE[w, , ], na.rm=TRUE)[k:p]
+    #na.rm=TRUE for WFB method which sometimes has errors and doesn't generate intervals
   }
   avg.coverage <- data.frame(avg.coverage)
   names(avg.coverage) <- nms
   avg.coverage$Rank <- k:p
   avg.coverage.long <- gather(avg.coverage, "Method", "RCC", -Rank)
-
+  if(set.range) ylim=range(avg.coverage.long$RCC)
   #Re-order factor levels
   avg.coverage.long$Method <- factor( as.character(avg.coverage.long$Method),
                                       levels=simnames)
@@ -40,7 +41,7 @@ plot_coverage <- function(R, simnames, legend.names,
   avg.coverage.long <- avg.coverage.long[o, ]
   h <- ggplot(avg.coverage.long, aes(x=Rank)) + geom_hline(aes(yintercept=0.9)) +
     geom_point(aes(y=RCC,  color=Method, shape=Method)) +
-    theme_bw(base_size = 14) + ylim(c(0, 1)) +
+    theme_bw(base_size = 14) +
     scale_shape_manual(values=shapes, labels=legend.names) +
     scale_color_manual(values=cols, labels=legend.names) +
     theme(panel.grid.major = element_blank(), panel.grid.minor=element_blank())
@@ -52,7 +53,8 @@ plot_coverage <- function(R, simnames, legend.names,
                       legend.text=element_text(size=9))
   if(y.axis.off) h <- h + theme(axis.title.y = element_blank())
   if(!main == "") h <- h + ggtitle(main) + theme(plot.title=element_text(size=20))
-  return(h)
+  if(set.range) return(h + ylim(ylim))
+  return(h+ ylim(c(0, 1)) )
 
 }
 
@@ -76,8 +78,7 @@ plot_width <- function(R, simnames, cols, shapes, legend.names,
   k <- floor((1-proportion)*p)
   k <- max(k, 1)
 
-  ylim=range(apply(R$WIDTH[which.keep, , ],
-                   MARGIN=1,  FUN=function(x){ z <- rowMeans(x); return(z[k:p])}), na.rm=TRUE)
+  ylim=range(apply(R$WIDTH[which.keep, , ], MARGIN=1,  FUN=function(x){ z <- rowMeans(x); return(z[k:p])}), na.rm=TRUE)
 
   avg.width <- matrix(nrow=(p-k+1), ncol=length(which.keep))
   nms <- c()
