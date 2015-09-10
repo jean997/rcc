@@ -6,6 +6,13 @@ make_fig3 <- function(){
   Z <- list()
   Z[[1]] <- rcc:::getobj("chr1_sim_results.RData")
   Z[[2]] <- rcc:::getobj("dnarep_sim_results.RData")
+
+  p <- 4950
+  k <- floor(0.8*p)
+  mincov <- min(rowMeans(Z[[1]]$COVERAGE[1, , ])[k:p], na.rm=TRUE)
+  for(i in 2:5){
+    mincov <- min(mincov, min(rowMeans(Z[[1]]$COVERAGE[i, , ])[k:p], na.rm=TRUE))
+  }
   for(i in 1:2){
 
     main =  titles[i]
@@ -17,7 +24,7 @@ make_fig3 <- function(){
                                       shapes= c(1, 3, 0, 2, 8),
                                       simnames=c("naive", "wfb2", "par", "wfb", "nonpar"),
                                       legend.names = c("Marginal", "WFB-Sliding", "Parametric Bootstrap", "WFB", "Non-Parametric Bootstrap"),
-                                      y.axis.off=y.axis.off, legend.position = "none", set.range=TRUE)
+                                      y.axis.off=y.axis.off, legend.position = "none", set.range=c(mincov, 1))
   }
     plot.list.w <- list()
     for(i in 1:2){

@@ -11,7 +11,7 @@
 #'@export
 plot_coverage <- function(R, simnames, legend.names,
                                   cols, shapes, main="", proportion=0.2,
-                                    y.axis.off=FALSE, set.range=FALSE,
+                                    y.axis.off=FALSE, set.range=c(0, 1),
                                     legend.position=c(0.28, 0.4)){
   which.keep <- which(R$simnames %in% simnames)
   p <- dim(R$COVERAGE)[2]
@@ -22,14 +22,13 @@ plot_coverage <- function(R, simnames, legend.names,
   for(i in 1:length(which.keep)){
     w <- which.keep[i]
     nms <- c(nms, R$simnames[w])
-    avg.coverage[,i] <- rowMeans(R$COVERAGE[w, , ], na.rm=TRUE)[k:p]
-    #na.rm=TRUE for WFB method which sometimes has errors and doesn't generate intervals
+    avg.coverage[,i] <- rowMeans(R$COVERAGE[w, , ])[k:p]
   }
   avg.coverage <- data.frame(avg.coverage)
   names(avg.coverage) <- nms
   avg.coverage$Rank <- k:p
   avg.coverage.long <- gather(avg.coverage, "Method", "RCC", -Rank)
-  if(set.range) ylim=range(avg.coverage.long$RCC)
+  yrange =range(avg.coverage.long$RCC)
   #Re-order factor levels
   avg.coverage.long$Method <- factor( as.character(avg.coverage.long$Method),
                                       levels=simnames)
@@ -53,8 +52,8 @@ plot_coverage <- function(R, simnames, legend.names,
                       legend.text=element_text(size=9))
   if(y.axis.off) h <- h + theme(axis.title.y = element_blank())
   if(!main == "") h <- h + ggtitle(main) + theme(plot.title=element_text(size=20))
-  if(set.range) return(h + ylim(ylim))
-  return(h+ ylim(c(0, 1)) )
+  if(!is.null(set.range)) return(h + ylim(set.range))
+  return(h)
 
 }
 
