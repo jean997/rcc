@@ -5,7 +5,8 @@
 \title{Plot coverage of example simulations}
 \usage{
 plot_coverage(R, simnames, legend.names, cols, shapes, main = "",
-  proportion = 0.2, y.axis.off = FALSE, legend.position = c(0.28, 0.4))
+  proportion = 0.2, y.axis.off = FALSE, set.range = c(0, 1),
+  legend.position = c(0.28, 0.4))
 }
 \arguments{
 \item{R}{A list produced by \code{example_sim}}
