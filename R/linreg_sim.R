@@ -101,7 +101,7 @@ linreg_sim <- function(X.pop, which.sample, n.rep=10,
 		M <- manyMeans(y=t, k=0.1*p, alpha=0.1, sigma=1)
 		ci.rtt1 <- matrix(nrow=p, ncol=2)
 		ci.rtt1[M$selected.set, ] <- M$ci
-		COVERAGE[simnames == "selInf1", ,i]<- (ci.rtt1[,1] < theta & theta < ci.rtt1[,2])[j]
+		COVERAGE[simnames == "selInf1", ,i]<- (ci.rtt1[,1] < effects & effects < ci.rtt1[,2])[j]
 		WIDTH[simnames=="selInf1", , i] <- (ci.rtt1[, 2] - ci.rtt1[,1])[j]
 
 		i <- i+1
