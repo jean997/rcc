@@ -16,7 +16,7 @@ run1_linreg_sim <- function(beta.type, which.run, file.prefix, seed=NULL){
   eff.sd <- 1
 
   n=100
-
+  data("population_genotypes", package="rcc")
   X.pop <- population_genotypes
 
   p <- 500

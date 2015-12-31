@@ -31,7 +31,7 @@ linreg_sim <- function(X.pop, which.sample, n.rep=10,
 		X0 <- cbind(rep(1, n), X[,which.X0])
 	}
 
-  simnames <- c("nonpar", "par", "wfb", "wfb2", "naive")
+  simnames <- c("nonpar", "par", "wfb", "wfb2", "naive", "selInf1")
 	COVERAGE <- array(dim=c(length(simnames), p, n.rep))
 	WIDTH <- array(dim=c(length(simnames),  p, n.rep))
 	i <- 1
@@ -47,6 +47,8 @@ linreg_sim <- function(X.pop, which.sample, n.rep=10,
     #Run linear regressions for each collumn of X.sample
 		my.bhat <-  many_lr(y, X)
 		j <- order(abs(my.bhat$beta_hat/my.bhat$se_hat))
+
+		cat("Got effect sizes.\n")
 
 		#Non parametric bootstrap
 		ci.nonpar <- lr_bs_nonpar_ci(y,X,my.bhat$beta_hat,my.bhat$se_hat,n.rep=1000)
@@ -94,6 +96,13 @@ linreg_sim <- function(X.pop, which.sample, n.rep=10,
 		                  my.bhat$beta_hat + my.bhat$se_hat*qt(0.95, df=p-2))
 		COVERAGE[which(simnames=="naive"), ,i] <- (ci.naive[,1] < effects & effects < ci.naive[,2])[j]
 		WIDTH[which(simnames=="naive"), , i] <- (ci.naive[,2] -ci.naive[,1])[j]
+
+		#Reid, Taylor, Tibshirani method (selectiveInference)
+		M <- manyMeans(y=t, k=0.1*p, alpha=0.1, sigma=1)
+		ci.rtt1 <- matrix(nrow=p, ncol=2)
+		ci.rtt1[M$selected.set, ] <- M$ci
+		COVERAGE[simnames == "selInf1", ,i]<- (ci.rtt1[,1] < theta & theta < ci.rtt1[,2])[j]
+		WIDTH[simnames=="selInf1", , i] <- (ci.rtt1[, 2] - ci.rtt1[,1])[j]
 
 		i <- i+1
 
