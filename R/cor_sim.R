@@ -98,7 +98,7 @@ cor_sim <- function(Sigma, n, n.rep=10,  eS=NULL){
 		M <- manyMeans(y=z_hat_scaled, k=0.1*nr, alpha=0.1, sigma=1)
 		ci.rtt1 <- matrix(nrow=nr, ncol=2)
 		ci.rtt1[M$selected.set, ] <- M$ci
-		COVERAGE[simnames == "selInf1", ,i]<- (ci.rtt1[,1] < r & rs < ci.rtt1[,2])[j]
+		COVERAGE[simnames == "selInf1", ,i]<- (ci.rtt1[,1] < r & r < ci.rtt1[,2])[j]
 		WIDTH[simnames=="selInf1", , i] <- (ci.rtt1[, 2] - ci.rtt1[,1])[j]
 
 
