@@ -24,7 +24,7 @@ all.seeds <- floor(runif(n=400, min=1000, max=1e7))
 
 for(beta.type in c("none", "ten_equal", "ten_norm", "mixture")){
     for(i in 1:400){
-      run1_linreg_sim(beta.type="none", which.run=i, file.prefix="linreg", seed=all.seeds[i])
+      run1_linreg_sim(beta.type=beta.type, which.run=i, file.prefix="linreg", seed=all.seeds[i])
     }
 }
 ```

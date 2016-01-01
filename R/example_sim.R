@@ -17,7 +17,7 @@
 example_sim <- function(theta, n=200, use.abs=TRUE){
   p <- length(theta)
   Z <- matrix(nrow=p, ncol=n)
-	simnames <- c("par", "wfb", "wfb2", "oracle", "naive", "selInf", "selInf1")
+	simnames <- c("par", "wfb", "wfb2", "oracle", "naive", "selInf1")
 	COVERAGE <- array(dim=c(length(simnames), p, n))
 	WIDTH <- array(dim=c(length(simnames),  p, n))
   for(i in 1:n){
@@ -66,13 +66,6 @@ example_sim <- function(theta, n=200, use.abs=TRUE){
 		ci.wfb.2 <- matrix(unlist(wfb.2), byrow=TRUE, nrow=p)
     COVERAGE[simnames == "wfb2", ,i]<- (ci.wfb.2[,1] < theta & theta < ci.wfb.2[,2])[j]
 		WIDTH[simnames=="wfb2", , i] <- (ci.wfb.2[, 2] - ci.wfb.2[,1])[j]
-
-		#Reid, Taylor, Tibshirani method (selectiveInference)
-		M <- manyMeans(y=z, k=0.1*p, alpha=0.1, sigma=sd(z))
-		ci.rtt <- matrix(nrow=p, ncol=2)
-		ci.rtt[M$selected.set, ] <- M$ci
-		COVERAGE[simnames == "selInf", ,i]<- (ci.rtt[,1] < theta & theta < ci.rtt[,2])[j]
-		WIDTH[simnames=="selInf", , i] <- (ci.rtt[, 2] - ci.rtt[,1])[j]
 
 		#Reid, Taylor, Tibshirani method (selectiveInference) (known sigma)
 		M <- manyMeans(y=z, k=0.1*p, alpha=0.1, sigma=1)

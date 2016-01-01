@@ -25,7 +25,7 @@ cor_sim <- function(Sigma, n, n.rep=10,  eS=NULL){
 	r <- S[upper.tri(S)]
 	nr <- length(r)
 
-  simnames <- c("nonpar", "par", "wfb", "wfb2", "naive")
+  simnames <- c("nonpar", "par", "wfb", "wfb2", "naive", "selInf1")
 	COVERAGE <- array(dim=c(length(simnames), nr, n.rep))
 	WIDTH <- array(dim=c(length(simnames),  nr, n.rep))
 
@@ -93,6 +93,14 @@ cor_sim <- function(Sigma, n, n.rep=10,  eS=NULL){
 		ci.naive <- cor_ci(W_hat, n)
 		COVERAGE[which(simnames=="naive"), ,i] <- (ci.naive[,1] < r & r < ci.naive[,2])[j]
 		WIDTH[which(simnames=="naive"), , i] <- (ci.naive[,2]-ci.naive[,1])[j]
+
+		#Reid, Taylor, Tibshirani method (selectiveInference)
+		M <- manyMeans(y=z_hat_scaled, k=0.1*nr, alpha=0.1, sigma=1)
+		ci.rtt1 <- matrix(nrow=nr, ncol=2)
+		ci.rtt1[M$selected.set, ] <- M$ci
+		COVERAGE[simnames == "selInf1", ,i]<- (ci.rtt1[,1] < r & rs < ci.rtt1[,2])[j]
+		WIDTH[simnames=="selInf1", , i] <- (ci.rtt1[, 2] - ci.rtt1[,1])[j]
+
 
 		i <- i+1
 
