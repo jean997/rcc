@@ -10,9 +10,9 @@
 #'@return A ggplot object
 #'@export
 plot_coverage <- function(R, simnames, legend.names,
-                                  cols, shapes, main="", proportion=0.2,
-                                    y.axis.off=FALSE, set.range=c(0, 1),
-                                    legend.position=c(0.28, 0.4)){
+                                  cols, shapes, ltys, main="", proportion=0.2,
+                                    y.axis.off=FALSE, y.range=c(0, 1),
+                                    legend.position=c(0.28, 0.4), span=NULL){
   which.keep <- which(R$simnames %in% simnames)
   p <- dim(R$COVERAGE)[2]
   k <- floor((1-proportion)*p)
@@ -28,7 +28,7 @@ plot_coverage <- function(R, simnames, legend.names,
   names(avg.coverage) <- nms
   avg.coverage$Rank <- k:p
   avg.coverage.long <- gather(avg.coverage, "Method", "RCC", -Rank)
-  yrange =range(avg.coverage.long$RCC)
+  if(is.null(y.range)) y.range =range(avg.coverage.long$RCC)
   #Re-order factor levels
   avg.coverage.long$Method <- factor( as.character(avg.coverage.long$Method),
                                       levels=simnames)
@@ -38,10 +38,17 @@ plot_coverage <- function(R, simnames, legend.names,
     o <- c(o, which(m==simnames[i]))
   }
   avg.coverage.long <- avg.coverage.long[o, ]
-  h <- ggplot(avg.coverage.long, aes(x=Rank)) + geom_hline(aes(yintercept=0.9)) +
-    geom_point(aes(y=RCC,  color=Method, shape=Method)) +
-    theme_bw(base_size = 14) +
-    scale_shape_manual(values=shapes, labels=legend.names) +
+  if(is.null(span)){
+    h <- ggplot(avg.coverage.long, aes(x=Rank)) + geom_hline(aes(yintercept=0.9)) +
+      geom_point(aes(y=RCC,  color=Method, shape=Method)) +
+      scale_shape_manual(values=shapes, labels=legend.names)
+  }else{
+    h <- ggplot(avg.coverage.long, aes(x=Rank)) + geom_hline(aes(yintercept=0.9)) +
+      geom_line(aes(y=RCC,  color=Method, linetype=Method),
+                span=0.2, stat="smooth", method="loess", level=0, alpha=0.8, size=1.5) +
+      scale_linetype_manual(values=ltys, labels=legend.names)
+  }
+  h <- h+  theme_bw(base_size = 14) + ylim(y.range) +
     scale_color_manual(values=cols, labels=legend.names) +
     theme(panel.grid.major = element_blank(), panel.grid.minor=element_blank())
 
@@ -52,7 +59,6 @@ plot_coverage <- function(R, simnames, legend.names,
                       legend.text=element_text(size=9))
   if(y.axis.off) h <- h + theme(axis.title.y = element_blank())
   if(!main == "") h <- h + ggtitle(main) + theme(plot.title=element_text(size=20))
-  if(!is.null(set.range)) return(h + ylim(set.range))
   return(h)
 
 }
@@ -68,8 +74,8 @@ plot_coverage <- function(R, simnames, legend.names,
 #'@param y.axis.off Don't label the y axis?
 #'@return A ggplot object
 #'@export
-plot_width <- function(R, simnames, cols, shapes, legend.names,
-                               main="", proportion=0.2,
+plot_width <- function(R, simnames, cols, shapes, ltys, legend.names,
+                               main="", proportion=0.2, span=NULL,
                                y.axis.off=FALSE,
                                legend.position="none"){
   which.keep <- which(R$simnames %in% simnames)
@@ -99,10 +105,18 @@ plot_width <- function(R, simnames, cols, shapes, legend.names,
   }
   avg.width.long <- avg.width.long[o, ]
 
-  h <- ggplot(avg.width.long, aes(x=Rank)) +
-    geom_point(aes(y=`Average Width`, group=Method,  color=Method, shape=Method)) +
-    theme_bw(base_size = 14) + ylim(ylim) +
-    scale_shape_manual(values=shapes, labels=legend.names) +
+
+  if(is.null(span)){
+    h <- ggplot(avg.width.long, aes(x=Rank)) +
+      geom_point(aes(y=`Average Width`, group=Method,  color=Method, shape=Method)) +
+      scale_shape_manual(values=shapes, labels=legend.names)
+  }else{
+    h <- ggplot(avg.width.long, aes(x=Rank)) +
+      geom_line(aes(y=`Average Width`, group=Method,  color=Method, linetype=Method),
+                stat="smooth", method="loess", span=span, level=0, alpha=0.8, size=1.5)+
+      scale_linetype_manual(values=ltys, labels=legend.names)
+  }
+  h <- h +  theme_bw(base_size = 14) + ylim(ylim) +
     scale_color_manual(values=cols, labels=legend.names) +
     theme(panel.grid.major = element_blank(), panel.grid.minor=element_blank())
 
@@ -118,3 +132,7 @@ plot_width <- function(R, simnames, cols, shapes, legend.names,
 
 }
 
+my_loess <- function(range, ...){
+  f <- loess(...)
+  f <- pmin()
+}
