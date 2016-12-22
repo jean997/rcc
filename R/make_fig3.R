@@ -40,10 +40,5 @@ make_fig3 <- function(){
                                      legend.names = c("Marginal", "WFB-Sliding", "Parametric Bootstrap", "WFB", "Non-Parametric Bootstrap", "Selective Inference"),
                                      y.axis.off=y.axis.off, legend.position = "none")
     }
-    #h <- arrangeGrob(plot.list.c[[1]], plot.list.c[[2]],
-     #                plot.list.w[[1]], plot.list.w[[2]],
-      #               ncol = 2)
-    #ggsave(filename = "corr_fig.pdf", plot=h, dpi=600, height=8, width=8)
     return(list("covereage"=plot.list.c, "width"=plot.list.w))
-
 }

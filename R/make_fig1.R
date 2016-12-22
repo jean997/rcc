@@ -41,11 +41,7 @@ make_fig1_si <- function(){
   h <- arrangeGrob(plot.list.c[[1]], plot.list.c[[2]], plot.list.c[[3]], plot.list.c[[4]],
                    plot.list.w[[1]], plot.list.w[[2]], plot.list.w[[3]], plot.list.w[[4]],
                    ncol = 4)
+
   #ggsave(filename = "example_fig2_sm.pdf", plot=h, dpi=600, height=8, width=16)
   return(list("covereage"=plot.list.c, "width"=plot.list.w))
 }
-
-
-
-
-

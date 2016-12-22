@@ -24,6 +24,7 @@ for(i in 1:4){
 }
 ```
 
+
 The function `example_sim` simulates normally distributed data from a given vector of means and constructs confidence intervals using the five methods described in the paper 
   * naive
   * oracle rank conditional pivotal intervals

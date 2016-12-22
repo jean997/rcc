@@ -105,9 +105,7 @@ plot_width <- function(R, simnames, cols, shapes, ltys, legend.names,
   avg.width <- data.frame(avg.width)
   names(avg.width) <- nms
   avg.width$Rank <- k:p
-
-
-
+  
   avg.width.long <- gather(avg.width, "Method", "Average Width", -Rank)
   avg.width.long$Method <- factor( as.character(avg.width.long$Method),
                                    levels=simnames)

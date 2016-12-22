@@ -42,21 +42,10 @@ example_sim <- function(theta, n=200, use.abs=TRUE, bs.rep=20){
     WIDTH[simnames=="par_db", , i] <- (ci[, 2] - ci[,1])[j]
     INTERVALS[simnames=="par_db", , i, ] <- ci[j,]
 
-		#ci <- par_bs_ci_sm(z=z, theta=z, use.abs=use.abs, n=bs.rep)
-		#COVERAGE[simnames == "parsm", ,i]<- ci[j,1] < theta[j] & ci[j,2] > theta[j]
-		#WIDTH[simnames=="parsm", , i] <- (ci[, 2] - ci[,1])[j]
-		#INTERVALS[simnames=="parsm", , i, ] <- ci[j,]
-    #Oracle
-
 		ci <- par_bs_ci(z=z, theta=theta, use.abs=use.abs, n=1000)
     COVERAGE[simnames == "oracle", ,i]<- ci[j,1] < theta[j] & ci[j,2] > theta[j]
 		WIDTH[simnames=="oracle", , i] <- (ci[, 2] - ci[,1])[j]
 		INTERVALS[simnames=="oracle", , i, ] <- ci[j,]
-
-		#ci <- par_bs_ci_sm(z=z, theta=theta, use.abs=use.abs, n=bs.rep)
-		#COVERAGE[simnames == "oraclesm", ,i]<- ci[j,1] < theta[j] & ci[j,2] > theta[j]
-		#WIDTH[simnames=="oraclesm", , i] <- (ci[, 2] - ci[,1])[j]
-		#INTERVALS[simnames=="oraclesm", , i, ] <- ci[j,]
     #Naive
     ci <- cbind(z-qnorm(0.95), z+qnorm(0.95))
     COVERAGE[simnames == "naive", ,i]<- ci[j,1] < theta[j] & ci[j,2] > theta[j]
