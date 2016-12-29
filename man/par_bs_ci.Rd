@@ -4,18 +4,21 @@
 \alias{par_bs_ci}
 \title{Parametric bootstrapped confidence intervals to control RCC}
 \usage{
-par_bs_ci(z, theta = z, alpha = 0.1, n = 2000, use.abs = FALSE)
+par_bs_ci(z, se = rep(1, length(z)), theta = z, level = 0.1, n = 1000,
+  use.abs = TRUE)
 }
 \arguments{
-\item{z}{Parameter estimates}
+\item{se}{Estimated standard error of z}
 
-\item{theta}{Used to produce oracle intervals for simulations whien E[z] is known.}
+\item{theta}{Possibley shrunken estimates of}
 
-\item{alpha}{Confidence level}
+\item{level}{Confidence level}
 
 \item{n}{Number of bootstrap replications}
 
-\item{use.abs}{Rank z by absolute value.}
+\item{use.abs}{Rank based on abs(z) rather than z}
+
+\item{beta}{Parameter estimates}
 }
 \value{
 A p by 2 matrix giving confidence intervals for each element of \code{z}

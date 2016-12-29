@@ -4,7 +4,7 @@
 \alias{example_sim}
 \title{Calculate expected coverage of several alternative intervals given a set of parameter values.}
 \usage{
-example_sim(theta, n = 200, use.abs = TRUE, bs.rep = 20)
+example_sim(theta, n = 200, use.abs = TRUE)
 }
 \arguments{
 \item{theta}{Vector of parameter values (length p)}

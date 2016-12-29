@@ -12,23 +12,23 @@
 #'@return A ggplot object
 #'@export
 plot_coverage <- function(R, simnames, legend.names,
-                                  cols, shapes, ltys, main="", proportion=0.2,
-                                    y.axis.off=FALSE, y.range=c(0, 1),
-                                    legend.position=c(0.28, 0.4), span=NULL){
+                          cols, shapes, ltys, main="", proportion=0.2,
+                          y.axis.off=FALSE, y.range=c(0, 1),
+                          legend.position=c(0.28, 0.4), span=NULL){
   which.keep <- which(R$simnames %in% simnames)
+  ncis <- length(which.keep)
   p <- dim(R$COVERAGE)[2]
-  k <- floor((1-proportion)*p)
-  k <- max(k, 1)
-  avg.coverage <- matrix(nrow=(p-k+1), ncol=length(which.keep))
+  k <- ceiling(proportion*p)
+  avg.coverage <- matrix(nrow=k, ncol=ncis)
   nms <- c()
-  for(i in 1:length(which.keep)){
+  for(i in 1:ncis){
     w <- which.keep[i]
     nms <- c(nms, R$simnames[w])
-    avg.coverage[,i] <- rowMeans(R$COVERAGE[w, , ])[k:p]
+    avg.coverage[,i] <- rowMeans(R$COVERAGE[w, , ])[1:k]
   }
   avg.coverage <- data.frame(avg.coverage)
   names(avg.coverage) <- nms
-  avg.coverage$Rank <- k:p
+  avg.coverage$Rank <- 1:k
   avg.coverage.long <- gather(avg.coverage, "Method", "RCC", -Rank)
   if(is.null(y.range)) y.range =range(avg.coverage.long$RCC)
   #Re-order factor levels
@@ -83,28 +83,27 @@ plot_width <- function(R, simnames, cols, shapes, ltys, legend.names,
                                legend.position="none"){
   which.keep <- which(R$simnames %in% simnames)
   p <- dim(R$WIDTH)[2]
-  k <- floor((1-proportion)*p)
-  k <- max(k, 1)
-
-  ylim=range(apply(R$WIDTH[which.keep, , ], MARGIN=1,  FUN=function(x){ z <- rowMeans(x); return(z[k:p])}), na.rm=TRUE)
+  k <- ceiling(proportion*p)
+  ncis <- length(which.keep)
+  ylim=range(apply(R$WIDTH[which.keep, , ], MARGIN=1,  FUN=function(x){ z <- rowMeans(x); return(z[1:k])}), na.rm=TRUE)
   if(!is.null(y.max)) ylim[2] <- y.max
-  avg.width <- matrix(nrow=(p-k+1), ncol=length(which.keep))
+  avg.width <- matrix(nrow=k, ncol=ncis)
   nms <- c()
-  for(i in 1:length(which.keep)){
+  for(i in 1:ncis){
     w <- which.keep[i]
     nms <- c(nms, R$simnames[w])
     if(!is.null(span)){
-      y <- rowMeans(R$WIDTH[w, , ])[k:p]
-      x <- k:p
+      y <- rowMeans(R$WIDTH[w, , ])[1:k]
+      x <- 1:k
       f <- loess(y~x, span=span)
-      avg.width[f$x-k+1,i] <- f$fitted
+      avg.width[f$x,i] <- f$fitted
     }else{
-      avg.width[,i] <- rowMeans(R$WIDTH[w, , ])[k:p]
+      avg.width[,i] <- rowMeans(R$WIDTH[w, , ])[1:k]
     }
   }
   avg.width <- data.frame(avg.width)
   names(avg.width) <- nms
-  avg.width$Rank <- k:p
+  avg.width$Rank <- 1:k
   
   avg.width.long <- gather(avg.width, "Method", "Average Width", -Rank)
   avg.width.long$Method <- factor( as.character(avg.width.long$Method),
@@ -142,4 +141,36 @@ plot_width <- function(R, simnames, cols, shapes, ltys, legend.names,
   return(h)
 
 }
+
+
+make_sim_legend <- function(legend.names, cols, ltys){
+  n <- length(legend.names)
+  #points <- data.frame(x=rep(1, 5), y = rev(seq(1, 3, length.out=5)))
+  points <- data.frame(y=rep(1, n), x = seq(1, 2.25, length.out=n))
+  
+  dist <- (2.25 -1)/n
+  points$left = points$x-dist*0.4
+  points$right = points$x + dist*0.4
+  
+  points$labs <- legend.names
+  points$lty <-ltys
+  points$cols <- cols
+  
+  p <-ggplot(points) +
+    geom_segment(aes(x=left, xend=right, y=y, yend=y), lty=points$lty,
+                 colour=points$cols, lwd=1.3)+
+        annotate(geom="text", y=rep(1.1, n), x=points$x,
+             label=points$labs, size=4) +
+    xlim(0.8, 2.5) + ylim(0.97, 1.2) +
+    theme_bw() + theme(panel.grid=element_blank(), axis.title=element_blank(),
+                       axis.text=element_blank(),
+                       panel.border=element_blank(), axis.ticks=element_blank())
+  
+  #ggsave(p, file="~/Dropbox/cfdr-jean/for_AOAS/img/sim_legend.png", height=1, width=8, units="in", dpi=300)
+  return(list("plot"=p, "info"=points))
+}
+
+
+
+
 

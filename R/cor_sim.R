@@ -1,5 +1,5 @@
 #' Calculate expected coverage of several alternative intervals for
-#'  marginal coefficients in linear regression.
+#'  marginal coefficients in gene expression correlation example
 #' @description This function can be used to generate simulations in section 3.1
 #' @param Sigma Covariance matrix from which data will be generated.
 #' @param n Number of samples

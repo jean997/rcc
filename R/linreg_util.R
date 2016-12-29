@@ -1,8 +1,9 @@
 #'@import tidyr
 #'@import ggplot2
-#'@import  psychometric
+#'@import psychometric
 #'@import selectiveInference
 #'@import gridExtra
+#'@import ashr
 
 #Generate data according to a linear model
 #X0 is probably a small subset of the total number of predictors

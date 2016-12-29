@@ -3,7 +3,7 @@
 \name{cor_sim}
 \alias{cor_sim}
 \title{Calculate expected coverage of several alternative intervals for
- marginal coefficients in linear regression.}
+ marginal coefficients in gene expression correlation example}
 \usage{
 cor_sim(Sigma, n, n.rep = 10, eS = NULL)
 }
