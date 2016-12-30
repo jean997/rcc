@@ -5,16 +5,6 @@
 #'@import gridExtra
 #'@import ashr
 
-#Generate data according to a linear model
-#X0 is probably a small subset of the total number of predictors
-lr_sim_pheno <- function(X0, beta, sd.err){
-	n <- dim(X0)[1]
-	err <- rnorm(n, 0, sd.err)
-	beta <- matrix(beta, nrow=ncol(X0), ncol=1)
-	y <- X0 %*% beta + err
-}
-
-
 #Run many linear regressions
 many_lr <- function(y, X){
 	p <- dim(X)[2]
@@ -72,43 +62,19 @@ lr_bs_nonpar_ci <- function(y, X, beta_hat, se, n.rep=2000, alpha=0.1){
   return(list("ci"=my.ci, "mean"=my.mean))
 }
 
-#Parametric bootstrap confidence intervals
-lr_bs_par_ci <-  function(beta_hat, se, n.rep=2000, beta_hat_mean=NULL, alpha=0.1){
-	p <- length(beta_hat)
-	if(is.null(beta_hat_mean)) beta_hat_mean <- beta_hat
-
-	B <- replicate(n = n.rep, expr = {
-    w <- rnorm(p, mean=beta_hat_mean, sd=se)
-		t.stat <- w/se
-		k <- order(abs(t.stat))
-    sign(t.stat[k])*(w[k]-beta_hat_mean[k])
-		})
-
-	q1 <- alpha/2
-	q2 <- 1-alpha/2
-  qs <- apply(B, MARGIN=1, FUN=function(x){quantile(x, probs=c(q1, q2))})
-
-  j <- order(abs(beta_hat/se))
-	my.ci <- cbind(beta_hat[j]-qs[2,], beta_hat[j]-qs[1,])
-	which.neg <- which(beta_hat[j] < 0)
-	my.ci[ which.neg , ] <- cbind(beta_hat[j][which.neg] + qs[1,which.neg], beta_hat[j][which.neg]+qs[2,which.neg])
-	jinv <- match(beta_hat, beta_hat[j])
-	my.ci <- my.ci[jinv,]
-  return(my.ci)
-}
-
 #Calculate population effects
-lr_pheno_effects_population <- function(X.pop, which.X0, beta, sd.err, which.sample, use.exp=FALSE){
-	stopifnot(length(beta) == length(which.X0) + 1)
+lr_pheno_effects_population <- function(X.pop, index, beta, sd.err, which.sample){
+	stopifnot(length(beta) == length(index))
 	n <- dim(X.pop)[1]
-	X0 <- cbind(rep(1, n), X.pop[, which.X0])
-	if(use.exp){
-		err <- rexp(n, rate=1) -1
+
+	
+	err <- rnorm(n, 0, sd.err)
+	if(length(index)==0){
+	  y <- err	
 	}else{
-		err <- rnorm(n, 0, sd.err)
+	  beta <- matrix( beta, nrow=length(index), ncol=1)
+	  y <- X.pop[, index] %*% beta + err
 	}
-	beta <- matrix(beta, nrow=ncol(X0), ncol=1)
-	y <- X0 %*% beta + err
 	effects.pop <- many_lr(y, X.pop)
 	return(list("effects"=effects.pop$beta_hat, "y"=y[which.sample]))
 }
