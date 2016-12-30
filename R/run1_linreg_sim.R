@@ -11,23 +11,14 @@
 #' @return This function saves an object produced by `linreg_sims` to a file.
 #'@export
 run1_linreg_sim <- function(beta.type, which.run, file.prefix, seed=NULL){
-  if(!is.null(seed)) set.seed(seed)
-  eff <- 2
-  eff.sd <- 1
-
-  n=100
   data("population_genotypes", package="rcc")
   X.pop <- population_genotypes
-
-  p <- 500
-
   which.type <- which(c("none", "ten_equal", "ten_norm", "mixture") == beta.type)
   stopifnot(length(which.type)==1)
-  data("macs_params", package="rcc")
-  which.X0 <- macs_params$include[[which.type]]
-  beta <- macs_params$betas[[which.type]]
-
-  z <- linreg_sim(X.pop=X.pop, which.sample = 1:n, n.rep=1,
-                  which.X0=which.X0, beta=beta)
+  data("linreg_params", package="rcc")
+  
+  z <- linreg_sim(X.pop=X.pop, which.sample = 1:100, n.rep=1,
+                  index=linreg_params[[which.type]]$index, 
+                  beta=linreg_params[[which.type]]$effect, seed=seed)
   save(z, file=paste0(file.prefix,  "_", beta.type,  "_n", which.run, ".RData"))
 }
