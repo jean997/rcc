@@ -1,14 +1,18 @@
 #N: Number of individuals to generate
 #length: length of segment in base pairs
 #t: mutation rate per site per 4N generations
-#From Xue, Y. et al. Curr. Biol. (2009) doi:10.1016/j.cub.2009.07.032. Human mutation rate might be about 1/3e7. With N_e of 1e5 a reasonable value of t should be around 0.001
+#From Xue, Y. et al. Curr. Biol. (2009) doi:10.1016/j.cub.2009.07.032. Human mutation rate might be about 1/3e7. 
+#With N_e of 1e5 a reasonable value of t should be around 0.001
 
 #r: recombination rate per site per 4N generations where N is effective population size.
 #In humans r varies across the genome 
 
 #From
 #Jensen-Seaman, M. I., Furey, T. S., Payseur, B. A., Lu, Y., Roskin, K. M., Chen, C.-F., ... Jacob, H. J. (2004). Comparative recombination rates in the rat, mouse, and human genomes. Genome Research, 14(4), 528-38. doi:10.1101/gr.1970304
-#Averages over whole chromosomes vary from 1 to 1.6 cM/Mb with higher rates in shorter chromosomes. If we assume an eff. pop. size of 1e5, this would suggest r=0.4 to 0.64. However, due to recombination hot spots, the rate will be lower in most segments. The same paper estimates average rate of 0.5 per 5 Mb and 0.4 per 10 Mb segment which suggests r = 0.004 to 0.0016. 
+#Averages over whole chromosomes vary from 1 to 1.6 cM/Mb with higher rates in shorter chromosomes. 
+#If we assume an eff. pop. size of 1e5, this would suggest r=0.4 to 0.64. 
+#However, due to recombination hot spots, the rate will be lower in most segments. 
+#The same paper estimates average rate of 0.5 per 5 Mb and 0.4 per 10 Mb segment which suggests r = 0.004 to 0.0016. 
 
 #From 
 #McVean, G. A. T., Myers, S. R., Hunt, S., Deloukas, P., Bentley, D. R., & Donnelly, P. (2004). The fine-scale structure of recombination rate variation in the human genome. Science (New York, N.Y.), 304(5670), 581-4. doi:10.1126/science.1092500
