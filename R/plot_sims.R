@@ -171,6 +171,20 @@ make_sim_legend <- function(legend.names, cols, ltys){
 }
 
 
-
+plot_cis <- function(rank, ci, truth, prop=1, plot.truth=FALSE){
+  dat <- data.frame("Rank"=rank, "ciL"=ci[,1], "ciU"=ci[,2], "truth"=truth)
+  dat$covered <-dat$ciL <= truth & dat$ciU >= truth
+  if(prop < 1){
+    nkeep <- ceiling(nrow(dat)*prop)
+    dat <- dat[dat$Rank <=nkeep,]
+  }
+  p <- ggplot(dat) + geom_linerange(aes(x=Rank, ymin=ciL, ymax=ciU, col=covered)) 
+  if(plot.truth) p <- p + geom_point(aes(x=Rank, y=truth, col=covered))
+  p <- p + 
+    scale_color_discrete(name="Parameter\nCovered") + 
+    theme_bw()+
+    theme(panel.grid=element_blank())
+  return(p)
+}
 
 
