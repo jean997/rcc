@@ -16,30 +16,13 @@ In this document we will compare several different approaches to building confid
 For thisr exploration we will use setting 2 from section 1.5. We have 1000 parameters generated from a $N(0, 1)$ distribution. Each of our observed statistics $Z_i$ is generated as $$Z_i \sim N(\theta_i, 1).$$
 We will rank these statistics based on their absolute value. 
 ```{r, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(rcc)
 set.seed(1e7)
 theta <- rnorm(1000)
 Z <- rnorm(n=1000, mean=theta)
 j <- order(abs(Z), decreasing=TRUE)
 rank <- match(1:1000, j)
-```
-
-
-```{r, echo=FALSE}
-library(ggplot2)
-library(rcc)
-plot_cis <- function(rank, ci, truth, prop=1){
-  dat <- data.frame("Rank"=rank, "ciL"=ci[,1], "ciU"=ci[,2], "truth"=truth)
-  dat$covered <-dat$ciL <= truth & dat$ciU >= truth
-  if(prop < 1){
-    nkeep <- ceiling(nrow(dat)*prop)
-    dat <- dat[dat$Rank <=nkeep,]
-  }
-  p <- ggplot(dat) + geom_linerange(aes(x=Rank, ymin=ciL, ymax=ciU, col=covered)) + 
-    scale_color_discrete(name="Parameter\nCovered") + 
-    theme_bw()+
-    theme(panel.grid=element_blank())
-  return(p)
-}
 ```
 
 
@@ -53,7 +36,7 @@ sum(ci.naive[,1] <= theta & ci.naive[,2] >= theta)/1000
 ```
 We can plot these intervals and color them by whether or not they cover their target parameter. Notice that even though the overall coverage rate is close to the nominal level, a lot of the non-covering intervals are constructed for the most extreme statistics.
 ```{r, echo=FALSE, out.width="0.5\\textwidth"}
-plot_cis(rank, ci.naive, theta) + ggtitle("Standard Marginal Intervals")
+rcc:::plot_cis(rank, ci.naive, theta) + ggtitle("Standard Marginal Intervals")
 ```
 
 This is just one data set. To see what the expected coverage rates at each rank are we'll simulate 100 more data sets:
@@ -89,7 +72,7 @@ ci.by <- cbind(Z.sel - qnorm(0.995) , Z.sel + qnorm(0.995))
 sum(ci.by[,1] <= theta.sel & ci.by[,2] >= theta.sel)/100
 ```
 ```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
-plot_cis(rank[rank <= 100], ci.by, theta.sel) + ggtitle("Benjamini and Yukatieli Intervals")
+rcc:::plot_cis(rank[rank <= 100], ci.by, theta.sel) + ggtitle("Benjamini and Yukatieli Intervals")
 ```
 
 It can be hard to see patterns in just one data set so lets look at the average over 100 data sets:
@@ -130,7 +113,7 @@ ci.wfb <- matrix(unlist(wfb), byrow=TRUE, nrow=1000)[rank <= 100,]
 sum(ci.wfb[,1] <= theta[rank <=100] & ci.wfb[,2]>= theta[rank<=100])/100
 ```
 ```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
-plot_cis(rank[rank <= 100], ci.wfb, theta.sel) + ggtitle("Weinstein, Fithian, and Benjamini Intervals")
+rcc:::plot_cis(rank[rank <= 100], ci.wfb, theta.sel) + ggtitle("Weinstein, Fithian, and Benjamini Intervals")
 ```
 
 Unforntunately, most of the non-covering intervals are still for the parameters with the most significnt estimates. This pattern is clear when we look at the average coverage over 100 data sets:
@@ -173,7 +156,7 @@ sum(ci.rtt[,1] <= theta[rank <=100] & ci.rtt[,2]>= theta[rank<=100])/100
 ```
 
 ```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
-plot_cis(rank[rank <= 100], ci.rtt, theta.sel) + ggtitle("Reid, Taylor, and Tibshirani Intervals")
+rcc:::plot_cis(rank[rank <= 100], ci.rtt, theta.sel) + ggtitle("Reid, Taylor, and Tibshirani Intervals")
 ```
 
 For the most part, these intervals are narrower than the @Weinstein2013 intervals. Non-covering intervals tend to be concentrated at the two extremes -- parameters associated with the most and least significant estimates tend to go uncovered. We can see this by looking at the average over 100 simulations:
@@ -229,7 +212,7 @@ sum(ci.boot[,1] <= theta & ci.boot[,2] >= theta)/1000
 
 
 ```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
-plot_cis(rank, ci.boot, theta) + ggtitle("Parametric Bootstrap Intervals")
+rcc:::plot_cis(rank, ci.boot, theta) + ggtitle("Parametric Bootstrap Intervals")
 ```
 
 
@@ -297,7 +280,7 @@ ggplot(dat) + geom_point(aes(x=Rank, y=Coverage)) + ylab("Average Coverage")  +
 The difference in the code above is only that we use `theta` in place of `zz` in the bootstrapping step.
 
 
-## Empirical Bayes Methods
+## Empirical Bayes Credible Intervals
 
 There are also empirical Bayes proposals for estimating praameters in high dimensional settings. Here we will look at the credible intervals generated using the method of @Stephens2016, which is implemented in the `ashr` package. This method assumes that $\theta_i$ are drawn from a unimodal distribution and that $Z_i \sim N(\theta_i, \sigma_i)$ where $\sigma_i$ is known. These assumptions both hold in this case so `ashr` does well. Unlike the selection adjusted methods, `ashr` also has an RCC close to the nominal level at every rank.
 
@@ -309,7 +292,7 @@ sum(ci.ash[,1]<= theta & ci.ash[,2] >= theta)/1000
 ```
 
 ```{r, show=FALSE, hold=TRUE, echo=FALSE, out.width="0.5\\textwidth"}
-plot_cis(rank, ci.ash, theta) + ggtitle("ashr Credible Intervals (Stephens 2016)")
+rcc:::plot_cis(rank, ci.ash, theta) + ggtitle("ashr Credible Intervals (Stephens 2016)")
 ```
 
 
