@@ -5,10 +5,8 @@
 #' @param X.pop a matrix of coefficients for an entire population.
 #' @param which.sample Indices of individuals who are sampled
 #' @param n.rep Number of simulations to run
-#' @param which.X0 Which coefficients contribute to the phenotype
-#' @param beta Effect size (including an intercept). Phenotypes whill be generated as
-#' \code{y = beta \%*\% X0} where
-#' \code{X0 = cbind(rep(1, length(which.sample)), X.pop[which.sample, which.X0])}
+#' @param index Which SNPs contribute to the phenotype
+#' @param beta Effect sizes for contributing SNPs.
 #' @return A list with elements:
 #' \describe{
 #' \item{\code{COVERAGE}}{A 5 by p by n array giving the coverage at each simulation.
@@ -45,7 +43,7 @@ linreg_sim <- function(X.pop, which.sample, n.rep=1,
 		cat("Got effect sizes.\n")
 
 		#Non parametric bootstrap
-		ci.nonpar <- lr_bs_nonpar_ci(y,X,my.bhat$beta_hat,my.bhat$se_hat,n.rep=1000)
+		ci.nonpar <- lr_bs_nonpar_ci(y,X.sample,my.bhat$beta_hat,my.bhat$se_hat,n.rep=1000)
 		ci.nonpar <- ci.nonpar$ci
 		COVERAGE[which(simnames=="nonpar"), ,i] <- (ci.nonpar[,1] < effects & effects < ci.nonpar[,2])[j]
 		WIDTH[which(simnames=="nonpar"), , i] <- (ci.nonpar[,2] -ci.nonpar[,1])[j]
