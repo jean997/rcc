@@ -1,6 +1,7 @@
 #Ran once to generate 100 ind. sub samples from pop. of 10k with maf of 0.05
 	#Will use the same MACS output
 library(SNPRelate)
+library(GWASTools)
 
 #'@param n.pop Total population size
 #'@param n.sample Sample size
@@ -50,8 +51,6 @@ make.genos <- function(macs.loc="~/Dropbox/rcc-temp/for_jcgs/rcc/macs/", tempdir
   lengths <- rep(150000, 5)
 
   for(i in 1:5){
-	  seed <- floor(runif(1, 0, 1000000))
-	  cat(seed, "\n")
 	  file.start <- paste("subset_", i, "_r", r_vals[i], "_n100", sep="")
 	  make.one.site(n.pop=10000, n.sample=100, maf.min=0.05, tempdir=tempdir,
 	              file.start=file.start, n.snp=100, r=r_vals[i], seed=seed, 
@@ -68,7 +67,8 @@ make.genos <- function(macs.loc="~/Dropbox/rcc-temp/for_jcgs/rcc/macs/", tempdir
 	sample_total_genos <- s_genos
 
   for(i in 2:5){
-	  file.start <- paste("subset_", i, "_r", r_vals[i], "_n200", sep="")
+    cat(i, "\n")
+	  file.start <- paste("subset_", i, "_r", r_vals[i], "_n100", sep="")
 	  all.file <- paste(file.start, "_all.RData", sep="")
 	  sample.file <- paste(file.start, "_sample.RData", sep="")
 	  load(all.file)
@@ -78,4 +78,12 @@ make.genos <- function(macs.loc="~/Dropbox/rcc-temp/for_jcgs/rcc/macs/", tempdir
   }
   save(all_total_genos, file="population_genos.RData")
   save(sample_total_genos, file="sample_genos.RData")
+  
+  
+  for(i in 1:5){
+    file.start <- paste("subset_", i, "_r", r_vals[i], "_n100", sep="")
+    unlink(paste0(file.start, "_fullgen.gds"))
+    unlink(paste0(file.start, "_all.RData"))
+    unlink(paste0(file.start, "_sample.RData"))
+  }
 }
