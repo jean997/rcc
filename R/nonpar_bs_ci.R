@@ -50,7 +50,7 @@ nonpar_bs_ci <- function(data, analysis.func, rank.func=NULL, level=0.9, res.ori
   
   #Do the bootstrap
   if(!parallel){
-    B <- sapply(1:nn.rep, FUN=function(i){
+    B <- sapply(1:n.rep, FUN=function(i){
       bs_func(i)
     })
   }else{
