@@ -58,7 +58,7 @@ linreg_sim <- function(X.pop, which.sample=1:100, n.rep=1,
 		WIDTH[which(simnames=="nonpar"), , i] <- (ci.nonpar[,2] -ci.nonpar[,1])[j]
 
 		#Parametric bootstrap
-		ci.par <- par_bs_ci(res.orig$estimate, res.orig$se,n.rep=1000, level=0.1)
+		ci.par <- par_bs_ci(res.orig$estimate, res.orig$se,n.rep=1000, level=0.9)
 		COVERAGE[which(simnames=="par"), ,i] <- (ci.par[,1] < effects & effects < ci.par[,2])[j]
 		WIDTH[which(simnames=="par"), , i] <- (ci.par[,2] -ci.par[,1])[j]
 
