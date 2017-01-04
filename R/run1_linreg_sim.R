@@ -10,7 +10,7 @@
 #'
 #' @return This function saves an object produced by `linreg_sims` to a file.
 #'@export
-run1_linreg_sim <- function(beta.type, which.run, file.prefix, seed=NULL){
+run1_linreg_sim <- function(beta.type, which.run, file.prefix, seed=NULL, parallel=FALSE){
   data("population_genotypes", package="rcc")
   X.pop <- population_genotypes
   which.type <- which(c("none", "ten_equal", "ten_norm", "mixture") == beta.type)
@@ -19,6 +19,6 @@ run1_linreg_sim <- function(beta.type, which.run, file.prefix, seed=NULL){
   
   z <- linreg_sim(X.pop=X.pop, which.sample = 1:100, n.rep=1,
                   index=linreg_params[[which.type]]$index, 
-                  beta=linreg_params[[which.type]]$effect, seed=seed)
+                  beta=linreg_params[[which.type]]$effect, seed=seed, parallel=parallel)
   save(z, file=paste0(file.prefix,  "_", beta.type,  "_n", which.run, ".RData"))
 }
