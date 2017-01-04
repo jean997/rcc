@@ -11,11 +11,12 @@
 #'@param span. Value of span to pass to loess. If present, coverage will be smoothed.
 #'@return A ggplot object
 #'@export
-plot_coverage <- function(R, simnames, legend.names,
-                          cols, shapes, ltys, main="", proportion=0.2,
+plot_coverage <- function(R, simnames, cols, shapes, ltys, 
+                          legend.names=NULL, main="", proportion=0.2,
                           y.axis.off=FALSE, y.range=c(0, 1),
                           legend.position=c(0.28, 0.4), span=NULL){
   which.keep <- which(R$simnames %in% simnames)
+  if(is.null(legend.names)) legend.names <- simnames
   ncis <- length(which.keep)
   p <- dim(R$COVERAGE)[2]
   k <- ceiling(proportion*p)
@@ -77,11 +78,12 @@ plot_coverage <- function(R, simnames, legend.names,
 #'@param span. Value of span to pass to loess. If present, coverage will be smoothed.
 #'@return A ggplot object
 #'@export
-plot_width <- function(R, simnames, cols, shapes, ltys, legend.names,
+plot_width <- function(R, simnames, cols, shapes, ltys, legend.names=NULL,
                                main="", proportion=0.2, span=NULL,
                                y.axis.off=FALSE, y.max=NULL,
                                legend.position="none"){
   which.keep <- which(R$simnames %in% simnames)
+  if(is.null(legend.names)) legend.names <- simnames
   p <- dim(R$WIDTH)[2]
   k <- ceiling(proportion*p)
   ncis <- length(which.keep)
