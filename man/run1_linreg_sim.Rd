@@ -4,7 +4,8 @@
 \alias{run1_linreg_sim}
 \title{Run one linear regression simulation using builtin parameters.}
 \usage{
-run1_linreg_sim(beta.type, which.run, file.prefix, seed = NULL)
+run1_linreg_sim(beta.type, which.run, file.prefix, seed = NULL,
+  parallel = FALSE)
 }
 \arguments{
 \item{beta.type}{One of "none", "ten_equal", "ten_norm", or "mixture"}

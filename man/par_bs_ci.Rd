@@ -5,7 +5,7 @@
 \title{Parametric bootstrapped confidence intervals to control RCC}
 \usage{
 par_bs_ci(z, se = rep(1, length(z)), rank.func = NULL, theta = z,
-  level = 0.1, n.rep = 1000, use.abs = TRUE, ...)
+  level = 0.9, n.rep = 1000, use.abs = TRUE, ...)
 }
 \arguments{
 \item{se}{Estimated standard error of z}

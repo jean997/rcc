@@ -4,8 +4,8 @@
 \alias{nonpar_bs_ci}
 \title{Non-Parametric bootstrapped confidence intervals to control RCC}
 \usage{
-nonpar_bs_ci(data, analysis.func, rank.func = NULL, level = 0.1,
-  n.rep = 1000, use.abs = TRUE, parallel = FALSE, ...)
+nonpar_bs_ci(data, analysis.func, rank.func = NULL, level = 0.9,
+  res.orig = NULL, n.rep = 1000, use.abs = TRUE, parallel = FALSE, ...)
 }
 \arguments{
 \item{data}{An n by K matrix of data}
