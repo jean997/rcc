@@ -4,8 +4,8 @@
 \alias{plot_coverage}
 \title{Plot coverage of example simulations}
 \usage{
-plot_coverage(R, simnames, legend.names, cols, shapes, ltys, main = "",
-  proportion = 0.2, y.axis.off = FALSE, y.range = c(0, 1),
+plot_coverage(R, simnames, cols, shapes, ltys, legend.names = NULL,
+  main = "", proportion = 0.2, y.axis.off = FALSE, y.range = c(0, 1),
   legend.position = c(0.28, 0.4), span = NULL)
 }
 \arguments{
@@ -13,11 +13,11 @@ plot_coverage(R, simnames, legend.names, cols, shapes, ltys, main = "",
 
 \item{simnames}{Names of CIs to plot. The order they are given will be the plotting order.}
 
-\item{legend.names}{Names to print in legend}
-
 \item{cols, shapes}{colors and shapes to use.}
 
 \item{ltys}{Line types.}
+
+\item{legend.names}{Names to print in legend}
 
 \item{main}{Title}
 

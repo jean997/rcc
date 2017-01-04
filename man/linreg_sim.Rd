@@ -5,7 +5,8 @@
 \title{Calculate expected coverage of several alternative intervals for
  marginal coefficients in linear regression.}
 \usage{
-linreg_sim(X.pop, which.sample, n.rep = 10, which.X0 = c(), beta = c(0))
+linreg_sim(X.pop, which.sample, n.rep = 1, index = c(), beta = c(0),
+  seed = NULL)
 }
 \arguments{
 \item{X.pop}{a matrix of coefficients for an entire population.}
@@ -14,11 +15,9 @@ linreg_sim(X.pop, which.sample, n.rep = 10, which.X0 = c(), beta = c(0))
 
 \item{n.rep}{Number of simulations to run}
 
-\item{which.X0}{Which coefficients contribute to the phenotype}
+\item{index}{Which SNPs contribute to the phenotype}
 
-\item{beta}{Effect size (including an intercept). Phenotypes whill be generated as
-\code{y = beta \%*\% X0} where
-\code{X0 = cbind(rep(1, length(which.sample)), X.pop[which.sample, which.X0])}}
+\item{beta}{Effect sizes for contributing SNPs.}
 }
 \value{
 A list with elements:

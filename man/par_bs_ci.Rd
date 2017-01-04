@@ -4,19 +4,23 @@
 \alias{par_bs_ci}
 \title{Parametric bootstrapped confidence intervals to control RCC}
 \usage{
-par_bs_ci(z, se = rep(1, length(z)), theta = z, level = 0.1, n = 1000,
-  use.abs = TRUE)
+par_bs_ci(z, se = rep(1, length(z)), rank.func = NULL, theta = z,
+  level = 0.1, n.rep = 1000, use.abs = TRUE, ...)
 }
 \arguments{
 \item{se}{Estimated standard error of z}
+
+\item{rank.func}{A Function that takes as first argument beta/se and returns a list with items order and rank.}
 
 \item{theta}{Possibley shrunken estimates of}
 
 \item{level}{Confidence level}
 
-\item{n}{Number of bootstrap replications}
+\item{n.rep}{Number of bootstrap replications}
 
 \item{use.abs}{Rank based on abs(z) rather than z}
+
+\item{...}{Additional parameters to pass to rank.func}
 
 \item{beta}{Parameter estimates}
 }

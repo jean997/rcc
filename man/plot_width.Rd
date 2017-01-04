@@ -4,7 +4,7 @@
 \alias{plot_width}
 \title{Plot average width of example simulations}
 \usage{
-plot_width(R, simnames, cols, shapes, ltys, legend.names, main = "",
+plot_width(R, simnames, cols, shapes, ltys, legend.names = NULL, main = "",
   proportion = 0.2, span = NULL, y.axis.off = FALSE, y.max = NULL,
   legend.position = "none")
 }
