@@ -44,12 +44,27 @@ par_bs_ci <- function(z, se = rep(1, length(z)),
   j <- my.rank.func(z/se)
   my.ci <- cbind(z[j$order]-qs[2,], z[j$order]-qs[1,])
   if(use.abs){
-    which.neg <- which(z[j$order] < 0)
-    my.ci[ which.neg , ] <- cbind(z[j$order][which.neg] + qs[1,which.neg], z[j$order][which.neg]+qs[2,which.neg])
+    s <- sign(z[j$order])
+    s[z[j$order]==0] <- 1
+    which.neg <- which(s==-1)
+    my.ci[ which.neg , ] <- cbind(z[j$order][which.neg] + qs[1,which.neg], 
+                                  z[j$order][which.neg]+qs[2,which.neg])
+  }else{
+    s <- rep(1, p)
   }
+  
+  
+  
   ci <- matrix(NA, nrow=p, ncol=2)
   jinv <- j$rank[!is.na(j$rank)]
   ci[!is.na(j$rank),] <- my.ci[jinv,]
+  
+  my.mean <- z[j$order] - s*rowMeans(B)
+  meanest <- rep(NA, p)
+  meanest[!is.na(j$rank)] <- my.mean[jinv]
+  return(list("ci"=ci, "mean"=meanest, "rank"=j$rank))
+  
+  
   return(ci)
 }
 
