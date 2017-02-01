@@ -13,47 +13,47 @@
 #'  \item{\code{simnames}}{Name of each type of the 5 types of confidence intervals}
 #' }
 #'@export
-biomarker_sim <- function(n=400, n.rep=1,  n.cutpoints=100, mean_outcome=NULL,
+biomarker_sim2 <- function(effects, n=400, n.rep=1,  nmarkers=1000, 
                           seed=NULL, parallel=TRUE){
   stopifnot(n %%2 == 0)
-  if(is.null(mean_outcome)){
-    mean_outcome <- function(x, trt){
-      if(x < 0.5) return(0)
-      #return((x-0.5)*trt)
-      return(0.5*trt)
-    }
-  }
+  if(!is.null(seed)) set.seed(seed)
+  
+  simnames <- c("nonpar", "par", "wfb", "naive", "selInf1", "ash")
+  
+  #effects <- rnorm(n=nmarkers, sd=3)
   analysis.func <- function(data){
-    y <- data[,4]
+    y <- data[,2]
     trt <- data[,1]
-    stats <- apply(data[, 5:(n.cutpoints + 4)], MARGIN=2, FUN=function(ii){
+    stats <- apply(data[, 3:(nmarkers+2)], MARGIN=2, FUN=function(ii){
       f <- lm(y~trt*ii)
-      if(nrow(summary(f)$coefficients) < 4) return(rep(0, 3))
       summary(f)$coefficients[4, 1:3]
     })
     stats <- data.frame(matrix(unlist(stats), byrow=TRUE, ncol=3))
     names(stats) <- c("estimate", "se", "statistic")
     return(stats)
   }
-  if(!is.null(seed)) set.seed(seed)
+  
+  COVERAGE <- array(dim=c(length(simnames), nmarkers, n.rep))
+  WIDTH <- array(dim=c(length(simnames),  nmarkers, n.rep))
   i <- 1
-  simnames <- c("nonpar", "par", "wfb", "naive", "selInf1", "ash")
-  COVERAGE <- array(dim=c(length(simnames), n.cutpoints, n.rep))
-  WIDTH <- array(dim=c(length(simnames),  n.cutpoints, n.rep))
-  cutpoints <- seq(0.1, 0.9, length.out=n.cutpoints)
+  trt <- rep(c(0, 1), each=n/2)
   while(i <= n.rep){
     cat(i, "..")
     #Generate data
-    dat <- data.frame("trt"=rep(c(0, 1), each=n/2), "w"=runif(n=n))
-    dat$mu <- apply(dat, MARGIN=1, FUN=function(z){mean_outcome(z[2],z[1])})
-    dat$y <- rnorm(n=n, mean=dat$mu, sd=0.5)
+    w <- matrix(rnorm(n=n*nmarkers), nrow=n)
+    Ey <- sapply(1:n, FUN=function(i){
+      sum(effects*as.numeric(w[i,] > 0))*trt[i]
+    })
+    y <- rnorm(n=n, mean=Ey, sd=0.5)
+    dat <- data.frame("trt"=trt, "y"=y)
+    
+    
     
     #Stats
-    ix <- sapply(cutpoints, FUN=function(thresh){as.numeric(dat$w >= thresh)})
+    ix <- apply(w, MARGIN=2, FUN=function(wj){as.numeric(wj > 0)})
     mydata <- cbind(dat, ix)
     stats <- analysis.func(mydata)
-    stats$truth <- sapply(cutpoints, FUN=function(wj){
-      0.5*(min(1-wj, 0.5)/(1-wj)) - 0.5*max(0, wj-0.5)/wj})
+    stats$truth <- effects
     j <- order(abs(stats$statistic), decreasing = TRUE)
     
     #Non parametric bootstrap
@@ -79,7 +79,7 @@ biomarker_sim <- function(n=400, n.rep=1,  n.cutpoints=100, mean_outcome=NULL,
       if(class(ci) == "try-error") return(c(NA, NA))
       return(unlist(ci))
     })
-    ci.wfb <- matrix(unlist(wfb), byrow=TRUE, nrow=n.cutpoints)
+    ci.wfb <- matrix(unlist(wfb), byrow=TRUE, nrow=nmarkers)
     ci.wfb[,1]<- ci.wfb[,1]*stats$se
     ci.wfb[,2]<- ci.wfb[,2]*stats$se
     COVERAGE[which(simnames=="wfb"), ,i] <- (ci.wfb[,1] < stats$truth & stats$truth < ci.wfb[,2])[j]
@@ -91,8 +91,8 @@ biomarker_sim <- function(n=400, n.rep=1,  n.cutpoints=100, mean_outcome=NULL,
     WIDTH[which(simnames=="naive"), , i] <- (ci.naive[,2]-ci.naive[,1])[j]
     
     #Reid, Taylor, Tibshirani method (selectiveInference)
-    M <- manyMeans(y=stats$statistic, k=0.1*n.cutpoints, alpha=0.1, sigma=1)
-    ci.rtt1 <- matrix(nrow=n.cutpoints, ncol=2)
+    M <- manyMeans(y=stats$statistic, k=0.1*nmarkers, alpha=0.1, sigma=1)
+    ci.rtt1 <- matrix(nrow=nmarkers, ncol=2)
     ci.rtt1[M$selected.set, ] <- M$ci
     ci.rtt1[,1]<- ci.rtt1[,1]*stats$se
     ci.rtt1[,2]<- ci.rtt1[,2]*stats$se
@@ -100,7 +100,7 @@ biomarker_sim <- function(n=400, n.rep=1,  n.cutpoints=100, mean_outcome=NULL,
     WIDTH[simnames=="selInf1", , i] <- (ci.rtt1[, 2] - ci.rtt1[,1])[j]
     
     ash.res <- ash(betahat = stats$estimate, sebetahat = stats$se, mixcompdist = "normal")
-    ci.ash <- ashci(ash.res, level=0.9, betaindex = 1:n.cutpoints, trace=FALSE )
+    ci.ash <- ashci(ash.res, level=0.9, betaindex = 1:nmarkers, trace=FALSE )
     COVERAGE[simnames == "ash", ,i]<- (ci.ash[,1] < stats$trut & stats$trut < ci.ash[,2])[j]
     WIDTH[simnames=="ash", , i] <- (ci.ash[, 2] - ci.ash[,1])[j]
     i <- i+1
