@@ -26,6 +26,7 @@ biomarker_sim3 <- function(effects, rho = -0.5, n=400, n.rep=1,  n.cutpoints=100
     trt <- data[,1]
     stats <- apply(data[, 3:((2*n.cutpoints)+2)], MARGIN=2, FUN=function(ii){
       f <- lm(y~trt*ii)
+      if(nrow(summary(f)$coefficients) < 4) return(rep(0, 3))
       summary(f)$coefficients[4, 1:3]
     })
     stats <- data.frame(matrix(unlist(stats), byrow=TRUE, ncol=3))
