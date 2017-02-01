@@ -98,13 +98,3 @@ example_sim <- function(theta, n=200, use.abs=TRUE){
   return(list("Z"=Z, "COVERAGE"=COVERAGE, "WIDTH"=WIDTH, 
               "simnames"=simnames, "THETA"=THETA))
 }
-
-#Utility function
-getobj <- function (Rdata){
-    objname <- load(Rdata)
-    if (length(objname) > 1) {
-        warning(paste("Multiple objects stored in file", Rdata,
-            "\nReturning only the first object"))
-    }
-    return(get(objname))
-}
