@@ -2,7 +2,7 @@
 #' Calculate expected coverage of several alternative intervals for
 #'  marginal coefficients in linear regression.
 #' @description This function can be used to generate simulations in section 3.1
-#' @param X.pop a matrix of coefficients for an entire population.
+#' @param X.pop A matrix of coefficients for an entire population.
 #' @param which.sample Indices of individuals who are sampled
 #' @param n.rep Number of simulations to run
 #' @param index Which SNPs contribute to the phenotype
