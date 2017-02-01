@@ -1,6 +1,5 @@
 #'@import tidyr
 #'@import ggplot2
-#'@import psychometric
 #'@import selectiveInference
 #'@import gridExtra
 #'@import ashr
@@ -40,60 +39,6 @@ many_lr <- function(y, X, parallel=FALSE){
 	return(df)
 }
 
-#Generate bootstrap confidence intervals from observed y and X
-#Confidence intervals come out in the original order
-lr_bs_nonpar_ci <- function(y, X, beta_hat, se, n.rep=2000, alpha=0.1, parallel=FALSE){
-	p <- dim(X)[2]
-	n <- dim(X)[1]
-	if(!parallel){
-	  B <- replicate(n=n.rep, expr={
-			S <- sample(1:n, size=n, replace=TRUE)
-			y.new <- y[S]
-			X.new <- X[S, ]
-			b <- many_lr(y.new, X.new)
-			#order by t-statistic
-			t.stat <- b$beta_hat/b$se_hat
-			t.stat[ b$beta_hat ==0 & b$se_hat==0] <- 0
-			k <- order(abs(t.stat))
-			s <- sign(t.stat[k]); s[t.stat[k] ==0] <- 1
-			s*(b$beta_hat[k] - beta_hat[k])
-		})
-	}else{
-	  cores <- detectCores()-1
-	  cl <- makeCluster(cores, type="FORK")
-	  on.exit(stopCluster(cl))
-	  B <- parSapply(cl, 1:n.rep, FUN=function(ii){
-	    S <- sample(1:n, size=n, replace=TRUE)
-	    y.new <- y[S]
-	    X.new <- X[S, ]
-	    b <- many_lr(y.new, X.new)
-	    #order by t-statistic
-	    t.stat <- b$beta_hat/b$se_hat
-	    t.stat[ b$beta_hat ==0 & b$se_hat==0] <- 0
-	    k <- order(abs(t.stat))
-	    s <- sign(t.stat[k]); s[t.stat[k] ==0] <- 1
-	    s*(b$beta_hat[k] - beta_hat[k])
-	  })
-	}
-	q1 <- alpha/2
-	q2 <- 1-alpha/2
-	qs <- apply(B, MARGIN=1, FUN=function(x){quantile(x, probs=c(q1, q2))})
-  j <- order(abs(beta_hat/se))
-
-  my.ci <- cbind(beta_hat[j]-qs[2,], beta_hat[j]-qs[1,])
-	#Compensate for efect of abs value
-	which.neg <- which(beta_hat[j] < 0)
-	my.ci[ which.neg , ] <- cbind(beta_hat[j][which.neg] + qs[1,which.neg],
-	                              beta_hat[j][which.neg]+qs[2,which.neg])
-
-	jinv <- match(beta_hat, beta_hat[j])
-	my.ci <- my.ci[jinv,]
-
-	my.mean <- beta_hat[j] - sign(beta_hat[j])*rowMeans(B)
-	my.mean <- my.mean[jinv]
-  return(list("ci"=my.ci, "mean"=my.mean))
-}
-
 #Calculate population effects
 lr_pheno_effects_population <- function(X.pop, index, beta, sd.err, which.sample, parallel=TRUE){
 	stopifnot(length(beta) == length(index))
@@ -107,4 +52,15 @@ lr_pheno_effects_population <- function(X.pop, index, beta, sd.err, which.sample
 	}
 	effects.pop <- many_lr(y, X.pop, parallel=parallel)
 	return(list("effects"=effects.pop$beta_hat, "y"=y[which.sample]))
+}
+
+#Utility function
+#'@export
+getobj <- function (Rdata){
+  objname <- load(Rdata)
+  if (length(objname) > 1) {
+    warning(paste("Multiple objects stored in file", Rdata,
+                  "\nReturning only the first object"))
+  }
+  return(get(objname))
 }
