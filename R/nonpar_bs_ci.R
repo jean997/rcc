@@ -49,14 +49,15 @@ nonpar_bs_ci <- function(data, analysis.func, rank.func=NULL, level=0.9, res.ori
   }
   
   #Do the bootstrap
+  save(samples, bs_func, data, analysis.func, my.rank.func, file="temp.RData")
   if(!parallel){
     B <- sapply(1:n.rep, FUN=function(i){
       bs_func(i)
     })
   }else{
-    cores <- detectCores()-1
-    cl <- makeCluster(cores, type="FORK")
-    on.exit(stopCluster(cl))
+    cores <- parallel::detectCores()-2
+    cl <- parallel::makeCluster(cores, type="FORK")
+    on.exit(parallel::stopCluster(cl))
     B <- parSapply(cl, 1:n.rep, FUN=function(i){
       bs_func(i)
     })
