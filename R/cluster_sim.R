@@ -83,27 +83,25 @@ cluster_sim <- function(beta, Sigma, err.sd=1, n.samp=100, n.rep=100, seed=NULL,
     cat("Got effect sizes.\n")
     
     #Non parametric bootstrap - basic
-    ci.nonpar <- nonpar_bs_ci(data, analysis.func = lr_func,n.rep=1000, res.orig=res.orig, level = 0.9, parallel=parallel)
-    ci.nonpar <- ci.nonpar$ci
+    ci.nonpar <- nonpar_bs_ci(data, analysis.func = lr_func,n.rep=1000, res.orig=res.orig, level = 0.9, parallel=parallel)$ci
     COVERAGE[which(simnames=="nonpar_basic"), ,i] <- (ci.nonpar[,1] < effects & effects < ci.nonpar[,2])[rk.basic$order]
     WIDTH[which(simnames=="nonpar_basic"), , i] <- (ci.nonpar[,2] -ci.nonpar[,1])[rk.basic$order]
     
     
     #Non parametric bootstrap - cw
     ci.nonpar <- nonpar_bs_ci(data, analysis.func = lr_func,n.rep=1000, rank.func = rank_block,
-                              res.orig=res.orig, level = 0.9, parallel=parallel, blocks=blocks)
-    ci.nonpar <- ci.nonpar$ci
+                              res.orig=res.orig, level = 0.9, parallel=parallel, blocks=blocks)$ci
     COVERAGE[which(simnames=="nonpar_cw"), 1:K,i] <- (ci.nonpar[,1] < effects & effects < ci.nonpar[,2])[rk.cw$order]
     WIDTH[which(simnames=="nonpar_cw"), 1:K , i] <- (ci.nonpar[,2] -ci.nonpar[,1])[rk.cw$order]
     
     
     #Parametric bootstrap - basic
-    ci.par <- par_bs_ci(res.orig$estimate, res.orig$se,n.rep=1000, level=0.9)
+    ci.par <- par_bs_ci(res.orig$estimate, res.orig$se,n.rep=1000, level=0.9)$ci
     COVERAGE[which(simnames=="par_basic"), ,i] <- (ci.par[,1] < effects & effects < ci.par[,2])[rk.basic$order]
     WIDTH[which(simnames=="par_basic"), , i] <- (ci.par[,2] -ci.par[,1])[rk.basic$order]
     
     #Parametric bootstrap - cw
-    ci.par <- par_bs_ci(res.orig$estimate, res.orig$se,n.rep=1000, level=0.9, rank.func = rank_block, blocks=blocks)
+    ci.par <- par_bs_ci(res.orig$estimate, res.orig$se,n.rep=1000, level=0.9, rank.func = rank_block, blocks=blocks)$ci
     COVERAGE[which(simnames=="par_cw"), 1:K ,i] <- (ci.par[,1] < effects & effects < ci.par[,2])[rk.cw$order]
     WIDTH[which(simnames=="par_cw"), 1:K, i] <- (ci.par[,2] -ci.par[,1])[rk.cw$order]
     
@@ -147,8 +145,8 @@ cluster_sim <- function(beta, Sigma, err.sd=1, n.samp=100, n.rep=100, seed=NULL,
                       res.orig$estimate + res.orig$se*qt(0.95, df=p-1))
     for(jj in 1:2){
       nm <- paste0("naive_", nms[jj])
-      COVERAGE[which(simnames==nm), ixs[[jj]] ,i] <- (ci.wfb[,1] < effects & effects < ci.wfb[,2])[orders[[jj]]]
-      WIDTH[which(simnames==nm), ixs[[jj]], i] <- (ci.wfb[,2] -ci.wfb[,1])[orders[[jj]]]
+      COVERAGE[which(simnames==nm), ixs[[jj]] ,i] <- (ci.naive[,1] < effects & effects < ci.naive[,2])[orders[[jj]]]
+      WIDTH[which(simnames==nm), ixs[[jj]], i] <- (ci.naive[,2] -ci.naive[,1])[orders[[jj]]]
     }    
     
     #Reid, Taylor, Tibshirani method (selectiveInference)
@@ -159,8 +157,8 @@ cluster_sim <- function(beta, Sigma, err.sd=1, n.samp=100, n.rep=100, seed=NULL,
     ci.rtt1[,2] <- ci.rtt1[,2]*res.orig$se
     for(jj in 1:2){
       nm <- paste0("selInf1_", nms[jj])
-      COVERAGE[which(simnames==nm), ixs[[jj]] ,i] <- (ci.wfb[,1] < effects & effects < ci.wfb[,2])[orders[[jj]]]
-      WIDTH[which(simnames==nm), ixs[[jj]], i] <- (ci.wfb[,2] -ci.wfb[,1])[orders[[jj]]]
+      COVERAGE[which(simnames==nm), ixs[[jj]] ,i] <- (ci.rtt1[,1] < effects & effects < ci.rtt1[,2])[orders[[jj]]]
+      WIDTH[which(simnames==nm), ixs[[jj]], i] <- (ci.rtt1[,2] -ci.rtt1[,1])[orders[[jj]]]
     }
     
     #ashr credible intervals
@@ -168,8 +166,8 @@ cluster_sim <- function(beta, Sigma, err.sd=1, n.samp=100, n.rep=100, seed=NULL,
     ci.ash <- ashci(ash.res, level=0.9, betaindex = 1:p, trace=FALSE)
     for(jj in 1:2){
       nm <- paste0("ash_", nms[jj])
-      COVERAGE[which(simnames==nm), ixs[[jj]] ,i] <- (ci.wfb[,1] < effects & effects < ci.wfb[,2])[orders[[jj]]]
-      WIDTH[which(simnames==nm), ixs[[jj]], i] <- (ci.wfb[,2] -ci.wfb[,1])[orders[[jj]]]
+      COVERAGE[which(simnames==nm), ixs[[jj]] ,i] <- (ci.ash[,1] < effects & effects < ci.ash[,2])[orders[[jj]]]
+      WIDTH[which(simnames==nm), ixs[[jj]], i] <- (ci.ash[,2] -ci.ash[,1])[orders[[jj]]]
     }
     
     i <- i+1
