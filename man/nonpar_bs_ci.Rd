@@ -31,4 +31,3 @@ A p by 2 matrix giving confidence intervals
 \description{
 Non-Parametric bootstrapped confidence intervals to control RCC
 }
-
