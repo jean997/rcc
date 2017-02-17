@@ -4,17 +4,17 @@
 #' @description This function implements algorithm 1 - simple
 #' parametric bootstrap for normal estimates
 #' @param beta Parameter estimates
-#' @param se Estimated standard error of z
+#' @param se Estimated standard error of beta. Defaults to 1.
 #' @param rank.func A Function that takes as first argument beta/se and returns a list with items order and rank.
-#' @param theta Possibley shrunken estimates of 
+#' @param theta Possibly shrunken estimates of E[beta]. Defaults to beta.
 #' @param level Confidence level
 #' @param n.rep Number of bootstrap replications
-#' @param use.abs Rank based on abs(z) rather than z
+#' @param use.abs Base the rank on abs(beta) rather than beta
 #' @param ... Additional parameters to pass to rank.func
-#' @return A p by 2 matrix giving confidence intervals for each element of \code{z}
+#' @return A p by 2 matrix giving confidence intervals for each element of \code{beta}
 #'@export
-par_bs_ci <- function(z, se = rep(1, length(z)), 
-                      rank.func=NULL, theta=z, level=0.9,
+par_bs_ci <- function(beta, se = rep(1, length(beta)), 
+                      rank.func=NULL, theta=beta, level=0.9,
                       n.rep=1000, use.abs=TRUE, ...){
   dots <- list(...)
   ndots <- length(dots)
@@ -26,7 +26,7 @@ par_bs_ci <- function(z, se = rep(1, length(z)),
   }else{
     my.rank.func <- function(stats){rank.func(stats, use.abs=use.abs)}
   }
-  p <- length(z)
+  p <- length(beta)
   B <- replicate(n = n.rep, expr = {
     w <- rnorm(p, mean=theta, sd=se)
     k <-my.rank.func(w/se)
@@ -41,14 +41,14 @@ par_bs_ci <- function(z, se = rep(1, length(z)),
   q2 <- 1-(1-level)/2
   qs <- apply(B, MARGIN=1, FUN=function(x){quantile(x, probs=c(q1, q2))})
 
-  j <- my.rank.func(z/se)
-  my.ci <- cbind(z[j$order]-qs[2,], z[j$order]-qs[1,])
+  j <- my.rank.func(beta/se)
+  my.ci <- cbind(beta[j$order]-qs[2,], beta[j$order]-qs[1,])
   if(use.abs){
-    s <- sign(z[j$order])
-    s[z[j$order]==0] <- 1
+    s <- sign(beta[j$order])
+    s[beta[j$order]==0] <- 1
     which.neg <- which(s==-1)
-    my.ci[ which.neg , ] <- cbind(z[j$order][which.neg] + qs[1,which.neg], 
-                                  z[j$order][which.neg]+qs[2,which.neg])
+    my.ci[ which.neg , ] <- cbind(beta[j$order][which.neg] + qs[1,which.neg], 
+                                  beta[j$order][which.neg]+qs[2,which.neg])
   }else{
     s <- rep(1, p)
   }
@@ -59,7 +59,7 @@ par_bs_ci <- function(z, se = rep(1, length(z)),
   jinv <- j$rank[!is.na(j$rank)]
   ci[!is.na(j$rank),] <- my.ci[jinv,]
   
-  my.mean <- z[j$order] - s*rowMeans(B)
+  my.mean <- beta[j$order] - s*rowMeans(B)
   meanest <- rep(NA, p)
   meanest[!is.na(j$rank)] <- my.mean[jinv]
   return(list("ci"=ci, "mean"=meanest, "rank"=j$rank))
