@@ -1,15 +1,29 @@
 #' Non-Parametric bootstrapped confidence intervals to control RCC
+#' @description This function implements Algorithm 3 in the paper (see Section 2.4). 
+#' The user supplies individual level data and an analysis function that generates
+#' test statistics and point estimates. The function resamples individuals from the 
+#' original data and recalculates test statistics and estimates 
+#' in order to calculate confidence intervals. 
 #' @param data An n by K matrix of data
-#' @param analysis.func A function that performs the analysis. It must take exactly one argument (data) and return a
-#' list or data frame including an item called 'estimate' and an item calle 'statistic'. 
+#' @param analysis.func A function that performs the analysis. This function should take exactly one argument (data) and return a
+#' list or data frame including an item called 'estimate' and an item called 'statistic'. 
 #' These should both be vectors of length p, the number of parameters.
-#' @param rank.func A Function that takes as first argument statistic as returned by analysis.func, as second argument use.abs
-#'  and returns a list with items order and rank.
+#' @param rank.func A function that takes, as first argument, the statistics returned by analysis.func.
+#' The second argument should be use.abs which can take a logical value. This argument indicates
+#' if ranking should be based on signed or absolute value of the statistics. rank.func should
+#' return a list including items named order and rank. See rcc:::basic_rank for an example.
+#' If NULL, the basic_rank function 
+#' will be used which ranks based on the size of the
+#' test statistics.
 #' @param level Confidence level
 #' @param n.rep Number of bootstrap replications
-#' @param use.abs Rank based on abs(z) rather than z
+#' @param res.orig Results of applying analysis.funct to the original data if they are already available.
+#' If NULL, these will be calculated.
+#' @param use.abs Logical. Rank based on absolute value of the statistics
 #' @param ... Additional parameters to pass to rank.func
-#' @return A p by 2 matrix giving confidence intervals 
+#' @return A list with items ci (a p by 2 matrix of confidence intervals), 
+#' mean (a vector of length p giving debiased mean estimate) and  
+#' rank, giving the rank associated with each parameter.
 #'@export
 nonpar_bs_ci <- function(data, analysis.func, rank.func=NULL, level=0.9, res.orig=NULL,
                          n.rep=1000, use.abs=TRUE, parallel=FALSE, ...){

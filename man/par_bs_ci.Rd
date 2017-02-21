@@ -12,7 +12,11 @@ par_bs_ci(beta, se = rep(1, length(beta)), rank.func = NULL, theta = beta,
 
 \item{se}{Estimated standard error of beta. Defaults to 1.}
 
-\item{rank.func}{A Function that takes as first argument beta/se and returns a list with items order and rank.}
+\item{rank.func}{A function that takes as first argument
+the t-statistics beta/se and returns a list with items order and rank.
+See rcc:::basic_rank for an example. If NULL, the basic_rank function 
+will be used which ranks based on the size of the
+test statistics.}
 
 \item{theta}{Possibly shrunken estimates of E[beta]. Defaults to beta.}
 
@@ -25,9 +29,12 @@ par_bs_ci(beta, se = rep(1, length(beta)), rank.func = NULL, theta = beta,
 \item{...}{Additional parameters to pass to rank.func}
 }
 \value{
-A p by 2 matrix giving confidence intervals for each element of \code{beta}
+A list with items ci (a p by 2 matrix of confidence intervals), 
+mean (a vector of length p giving debiased mean estimate) and  
+rank, giving the rank associated with each parameter.
 }
 \description{
-This function implements algorithm 1 - simple
-parametric bootstrap for normal estimates
+This function implements the parametric bootstrap 
+(see Section 2.3 of the referenced paper). The user supplies point estimates, standard
+errors and optionally, a ranking function.
 }
