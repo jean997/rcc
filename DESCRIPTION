@@ -1,22 +1,16 @@
 Package: rcc
 Type: Package
-Title: Replicate simulations in "Rank conditional coverage and
-    confidence intervals in high dimensional problems."
+Title: Parametic bootstrapping to control rank conditional coverage
 Version: 0.1
-Date: 2015-08-29
+Date: 2017-02-21
 Author: blinded for now
-Maintainer: blinded for now <xxxx@yy.edu>
-Description: This package is contains code to replicate the simulations in "Rank
-    conditional coverage and confidence intervals in high dimensional problems." It
-    contains three vignettes walking through how to do this.
-License: What license is it under?
+Maintainer: Jean Morrison <jeanm@uchicago.edu>
+Description: This package implements the parametric and non-parametric bootstrap 
+    confidence interval methods described in "Rank
+    conditional coverage and confidence intervals in high dimensional problems." 
+    by Jean Morrison and Noah Simon.
+License: GPL (>= 2)
 LazyData: TRUE
-Suggests:
-    knitr,
-    ggplot2,
-    psychometric,
-    tidyr
-VignetteBuilder: knitr
 NeedsCompilation: no
 Packaged: 2016-07-04 17:09:01 UTC; jean
 RoxygenNote: 6.0.1
