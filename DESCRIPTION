@@ -3,8 +3,10 @@ Type: Package
 Title: Parametic bootstrapping to control rank conditional coverage
 Version: 0.1
 Date: 2017-02-21
-Author: blinded for now
+Author: Jean Morrison
 Maintainer: Jean Morrison <jeanm@uchicago.edu>
+URL: http://github.com/jean997/rcc
+BugReports: http://github.com/jean997/rcc/issues
 Description: This package implements the parametric and non-parametric bootstrap 
     confidence interval methods described in "Rank
     conditional coverage and confidence intervals in high dimensional problems." 
