@@ -16,9 +16,14 @@
 #' @param n.rep Number of bootstrap replications
 #' @param use.abs Base the rank on abs(beta) rather than beta
 #' @param ... Additional parameters to pass to rank.func
-#' @return A list with items ci (a p by 2 matrix of confidence intervals), 
-#' mean (a vector of length p giving debiased mean estimate) and  
-#' rank, giving the rank associated with each parameter.
+#' @return A data frame giving original estimates and standard errors, 
+#' confidence intervals, debiased point estimates, and rank for each parameter.
+#' @examples 
+#' #generate some fake parameter estimates
+#' theta <- c(rep(0, 900), rnorm(n=100)) #vector of means
+#' beta <- rnorm(n=1000, mean=theta, sd=1)
+#' cis <- par_bs_ci(beta=beta, n.rep=500) #calculate parametric bootstrap confidence intervals
+#' head(cis)
 #'@export
 par_bs_ci <- function(beta, se = rep(1, length(beta)), 
                       rank.func=NULL, theta=beta, level=0.9,
@@ -69,10 +74,11 @@ par_bs_ci <- function(beta, se = rep(1, length(beta)),
   my.mean <- beta[j$order] - s*rowMeans(B)
   meanest <- rep(NA, p)
   meanest[!is.na(j$rank)] <- my.mean[jinv]
-  return(list("ci"=ci, "mean"=meanest, "rank"=j$rank))
-  
-  
-  return(ci)
+  ret <- data.frame("beta"=beta, "se"=se, "rank"=j$rank, 
+                    "ci.lower"=ci[,1], "ci.upper"=ci[,2], 
+                    "debiased.est"=meanest)
+  return(ret)
+
 }
 
 basic_rank <- function(stats, use.abs=TRUE){

@@ -1,4 +1,6 @@
-#' Non-Parametric bootstrapped confidence intervals to control RCC
+#'@importFrom stats quantile rnorm
+
+#' @title Non-Parametric bootstrapped confidence intervals to control RCC
 #' @description This function implements Algorithm 3 in the paper (see Section 2.4). 
 #' The user supplies individual level data and an analysis function that generates
 #' test statistics and point estimates. The function resamples individuals from the 
@@ -20,10 +22,31 @@
 #' @param res.orig Results of applying analysis.funct to the original data if they are already available.
 #' If NULL, these will be calculated.
 #' @param use.abs Logical. Rank based on absolute value of the statistics
+#' @param parallel Logical. If true, use the parallel package to make use of multiple cores.
 #' @param ... Additional parameters to pass to rank.func
-#' @return A list with items ci (a p by 2 matrix of confidence intervals), 
-#' mean (a vector of length p giving debiased mean estimate) and  
-#' rank, giving the rank associated with each parameter.
+#' @return A data frame giving original estimates and statistics, 
+#' confidence intervals, debiased point estimates, and rank for each parameter.
+#' @examples 
+#' #generate some data
+#' dat <- matrix(rnorm(n=100*30), nrow=100)
+#' #We need an analysis function. We will do a t-test comparing
+#' #the first 15 samples and the last 15 samples
+#' my.analysis.func <- function(data){
+#'     x <- rep(c(1, 0), each=15)
+#'     B <- t(apply(data, MARGIN=1, FUN=function(y){
+#'         f <- t.test(y~x)
+#'         est <- f$estimate[2]-f$estimate[1]
+#'         stat <- f$statistic
+#'         return(c(est, stat))
+#'     }))
+#'     B <- data.frame(B)
+#'     names(B) <- c("estimate", "statistic")
+#'     return(B)
+#' }
+#' 
+#' #Calculate confidence intervals
+#' cis <- nonpar_bs_ci(data=dat, analysis.func=my.analysis.func, n.rep=500)
+#' head(cis)
 #'@export
 nonpar_bs_ci <- function(data, analysis.func, rank.func=NULL, level=0.9, res.orig=NULL,
                          n.rep=1000, use.abs=TRUE, parallel=FALSE, ...){
@@ -33,7 +56,7 @@ nonpar_bs_ci <- function(data, analysis.func, rank.func=NULL, level=0.9, res.ori
   
   #Ranking Function
   if(is.null(rank.func)){
-    my.rank.func <- function(stats){rcc:::basic_rank(stats, use.abs=use.abs)}
+    my.rank.func <- function(stats){basic_rank(stats, use.abs=use.abs)}
   }else if(ndots > 0){
     my.rank.func <- function(stats){rank.func(stats, use.abs=use.abs, ...)}
   }else{
@@ -69,10 +92,10 @@ nonpar_bs_ci <- function(data, analysis.func, rank.func=NULL, level=0.9, res.ori
       bs_func(i)
     })
   }else{
-    cores <- parallel::detectCores()-2
+    cores <- parallel::detectCores()-1
     cl <- parallel::makeCluster(cores, type="FORK")
     on.exit(parallel::stopCluster(cl))
-    B <- parSapply(cl, 1:n.rep, FUN=function(i){
+    B <- parallel::parSapply(cl, 1:n.rep, FUN=function(i){
       bs_func(i)
     })
   }
@@ -103,5 +126,8 @@ nonpar_bs_ci <- function(data, analysis.func, rank.func=NULL, level=0.9, res.ori
   my.mean <- res.orig$estimate[rank.orig$order] - s*rowMeans(B)
   meanest <- rep(NA, p)
   meanest[!is.na(rank.orig$rank)] <- my.mean[jinv]
-  return(list("ci"=ci, "mean"=meanest, "rank"=rank.orig$rank))
+  ret <- data.frame("est"=res.orig$estimate, "statistic"=res.orig$statistic,
+                    "rank"=rank.orig$rank, "ci.lower"=ci[,1], "ci.upper"=ci[,2], 
+                    "debiased.est"=meanest)
+  return(ret)
 }

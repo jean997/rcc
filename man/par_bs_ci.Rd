@@ -29,12 +29,18 @@ test statistics.}
 \item{...}{Additional parameters to pass to rank.func}
 }
 \value{
-A list with items ci (a p by 2 matrix of confidence intervals), 
-mean (a vector of length p giving debiased mean estimate) and  
-rank, giving the rank associated with each parameter.
+A data frame giving original estimates and standard errors, 
+confidence intervals, debiased point estimates, and rank for each parameter.
 }
 \description{
 This function implements the parametric bootstrap 
 (see Section 2.3 of the referenced paper). The user supplies point estimates, standard
 errors and optionally, a ranking function.
+}
+\examples{
+#generate some fake parameter estimates
+theta <- c(rep(0, 900), rnorm(n=100)) #vector of means
+beta <- rnorm(n=1000, mean=theta, sd=1)
+cis <- par_bs_ci(beta=beta, n.rep=500) #calculate parametric bootstrap confidence intervals
+head(cis)
 }

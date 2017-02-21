@@ -31,12 +31,13 @@ If NULL, these will be calculated.}
 
 \item{use.abs}{Logical. Rank based on absolute value of the statistics}
 
+\item{parallel}{Logical. If true, use the parallel package to make use of multiple cores.}
+
 \item{...}{Additional parameters to pass to rank.func}
 }
 \value{
-A list with items ci (a p by 2 matrix of confidence intervals), 
-mean (a vector of length p giving debiased mean estimate) and  
-rank, giving the rank associated with each parameter.
+A data frame giving original estimates and statistics, 
+confidence intervals, debiased point estimates, and rank for each parameter.
 }
 \description{
 This function implements Algorithm 3 in the paper (see Section 2.4). 
@@ -44,4 +45,26 @@ The user supplies individual level data and an analysis function that generates
 test statistics and point estimates. The function resamples individuals from the 
 original data and recalculates test statistics and estimates 
 in order to calculate confidence intervals.
+}
+\examples{
+#generate some data
+dat <- matrix(rnorm(n=100*30), nrow=100)
+#We need an analysis function. We will do a t-test comparing
+#the first 15 samples and the last 15 samples
+my.analysis.func <- function(data){
+    x <- rep(c(1, 0), each=15)
+    B <- t(apply(data, MARGIN=1, FUN=function(y){
+        f <- t.test(y~x)
+        est <- f$estimate[2]-f$estimate[1]
+        stat <- f$statistic
+        return(c(est, stat))
+    }))
+    B <- data.frame(B)
+    names(B) <- c("estimate", "statistic")
+    return(B)
+}
+
+#Calculate confidence intervals
+cis <- nonpar_bs_ci(data=dat, analysis.func=my.analysis.func, n.rep=500)
+head(cis)
 }
