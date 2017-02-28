@@ -27,9 +27,12 @@
 #' @return A data frame giving original estimates and statistics, 
 #' confidence intervals, debiased point estimates, and rank for each parameter.
 #' @examples 
-#' #generate some data
-#' dat <- matrix(rnorm(n=100*30), nrow=100)
-#' #We need an analysis function. We will do a t-test comparing
+#' #Generate some data -- 20 parameters, 30 samples
+#' #Most problems will have many more parameters!
+#' set.seed(4e8)
+#' dat <- matrix(rnorm(n=20*30), nrow=20)
+#' 
+#' #Write a function to do a t-test comparing
 #' #the first 15 samples and the last 15 samples
 #' my.analysis.func <- function(data){
 #'     x <- rep(c(1, 0), each=15)
