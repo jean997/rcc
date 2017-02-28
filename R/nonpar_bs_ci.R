@@ -27,10 +27,10 @@
 #' @return A data frame giving original estimates and statistics, 
 #' confidence intervals, debiased point estimates, and rank for each parameter.
 #' @examples 
-#' #Generate some data -- 20 parameters, 30 samples
+#' #Generate some data -- 10 parameters, 30 samples
 #' #Most problems will have many more parameters!
 #' set.seed(4e8)
-#' dat <- matrix(rnorm(n=20*30), nrow=20)
+#' dat <- matrix(rnorm(n=10*30), nrow=10)
 #' 
 #' #Write a function to do a t-test comparing
 #' #the first 15 samples and the last 15 samples
